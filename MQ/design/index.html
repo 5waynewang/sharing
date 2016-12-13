@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  <title>聊聊MQ</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/style/web-2.0.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="../../deck.js/core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="../../deck.js/modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+
+    <section class="slide" id="index">
+      <h2>聊聊MQ</h2>
+	  <h2>-----如何设计一款MQ？</h2>
+      <ol>
+		  <p>
+	Name : 王伟
+	<br>
+	Department : 理财技术部
+	<br>
+	Email: hzwangwei6@corp.netease.com
+		  </p>
+      </ol>
+    </section>
+	
+    <section class="slide" id="what-mq">
+      <h2>MQ是什么？</h2>
+    </section>
+	
+    <section class="slide" id="how-mq-do">
+      <h2>MQ能做什么？</h2>
+
+      <ul>
+        <li>
+          <strong>异步</strong>
+        </li>
+		
+        <li>
+          <strong>解耦</strong>
+        </li>
+		
+        <li>
+          <strong>削峰</strong>
+        </li>
+		
+        <li>
+          <strong>最终一致</strong>
+        </li>
+		
+        <li>
+          <strong>广播</strong>
+        </li>
+      </ul>
+    </section>
+	
+    <section class="slide" id="mq-word">
+      <h2>MQ的一些术语</h2>
+
+      <ul>
+        <li>
+          <strong>Topic</strong>: 消息主题，表示一类消息
+        </li>
+		
+        <li>
+          <strong>Producer</strong>: 消息生产者，负责产生消息，一般由业务系统负责产生消息。
+        </li>
+		
+        <li>
+          <strong>Consumer Group</strong>: 一类Consumer的集合名称，这类Consumer通常消费一类消息，且消费逻辑一致。
+        </li>
+		
+        <li>
+          <strong>Consumer</strong>: 消息消费者，负责消费消息，一般是后台系统负责异步消费。
+        </li>
+		
+        <li>
+          <strong>Broker</strong>: 消息中转角色，负责存储消息，转发消息，一般也称为Server。
+        </li>
+      </ul>
+	  
+      <img src="./images/simple-mq-relation.png" alt="SimpleMQRelation">
+    </section>
+	
+    <section class="slide" id="how-design-pefect-ms">
+      <h2>想象下：一个完整的MQ服务应该具备什么？</h2>
+	  <p class="slide" id="DesignPefectMQ-img">
+      <img src="./images/DesignPefectMQ.png" alt="DesignPefectMQ">
+	  </p>
+    </section>
+
+	<section class="slide" id="singleTopicSingleQueue-img">
+      <h2>单队列实现发布订阅</h2>
+      <img src="./images/singleQueue.png" alt="singleTopicSingleQueue">
+    </section>
+
+    <section class="slide" id="singleTopicSingleQueue-remark">
+      <h2>单队列实现发布订阅</h2>
+
+      <ul>
+        <li>
+          <strong>I/O</strong>: java文件NIO，MMap，顺序读、写
+        </li>
+
+        <li>
+          <strong>消息结构</strong>: offset定义
+		  <img src="./images/message-design.png" alt="message-design">
+        </li>
+		
+        <li>
+          <strong>Topic关系维护</strong>: Topic与Queue的关系
+        </li>
+		
+        <li>
+          <strong>消费关系维护</strong>: Consumer、Topic、Queue、offset
+        </li>
+
+        <li>
+          <strong>消息存储</strong>: 定期、定量、同步、异步
+        </li>
+
+        <li>
+          <strong>消息堆积</strong>: 消息过期
+        </li>
+      </ul>
+
+      <p class="slide" id="singleTopicSingleQueue-remark-memo">相当于实现一个文件队列，这块东西可以单独抽出来作为java.util.Queue的实现类使用，适合那些担心应用重启会丢消息的场景，比方说：异步请求的失败重试</p>
+    </section>
+
+	<section class="slide" id="singleTopicSingleQueue-img2">
+      <h2>单队列实现发布订阅</h2>
+      <img src="./images/singleQueue.png" alt="singleTopicSingleQueue">
+	  <h2>单机情况下如何演进？</h2>
+    </section>
+
+	<section class="slide" id="singleTopicMultiQueue-clusterConsuming-img">
+      <h2>队列分区</h2>
+      <img src="./images/patition-clusterConsuming.png" alt="singleTopicMultiQueue-clusterConsuming">
+    </section>
+	
+    <section class="slide" id="singleTopicMultiQueue-clusterConsuming-remark">
+      <h2>队列分区-集群消费</h2>
+	  <p>集群消费：一个Consumer Group中的Consumer实例平均分摊消费消息。例如某个Topic有9条消息，其中一个Consumer Group有3个实例（可能是3个进程，或者3台机器），那么每个实例只消费其中的3条消息。</p>
+      <ul>
+        <li>
+          <strong>Topic关系维护</strong>: Topic与分区的关系
+        </li>
+
+        <li>
+          <strong>消费关系维护</strong>: consumer group对每个Queue的消费进度
+        </li>
+		
+        <li>
+          <strong>负载均衡</strong>: Provider轮询写，Consumer平均消费
+        </li>
+		
+        <li>
+          <strong>消息的读写</strong>: 代理到单个队列的读写
+        </li>
+		
+        <li>
+          <strong>消费模型pull/push</strong>: 双重保证，消费pull通知push
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="singleTopicMultiQueue-broadcastConsuming-img">
+      <h2>队列分区-广播消费</h2>
+	  <p>广播消费：一条消息被多个Consumer消费，即使这些Consumer属于同一个Consumer Group，消息也会被Consumer Group中的每个Consumer都消费一次，广播消费中的Consumer Group概念可以认为在消息划分方面无意义。</p>
+      <img src="./images/patition-broadcastConsuming.png" alt="singleTopicMultiQueue-broadcastConsuming">
+    </section>
+	
+    <section class="slide" id="singleTopicMultiQueue-broadcastConsuming-remark">
+      <h2>队列分区-广播消费</h2>
+	  <p>与集群消费不同的点：</p>
+      <ul>
+        <li>
+          <strong>消费关系维护</strong>: consumer对每个queue的消费进度
+        </li>
+		
+        <li>
+          <strong>负载均衡</strong>: Provider轮询写，Consumer全部消费（无法loadbalance）
+        </li>
+      </ul>
+	  
+	  <h2 class="slide" id="singleTopicMultiQueue-broadcastConsuming-remark-optimize">单机还能优化吗？</h2>
+    </section>
+	
+    <section class="slide" id="single-optimize-patition">
+      <h2>kafka分区数过多的问题</h2>
+	  <p class="slide" id="RocketMQ-offset">RocketMQ解决方案：
+      <img src="./images/RocketMQ-offset.png" alt="RocketMQOffset"></p>
+
+	  <h2 class="slide" id="single-optimize">单机还能优化吗？</h2>
+	  <h2 class="slide" id="single-to-cluster">如何摆脱单点迈向集群？</h2>
+    </section>
+	
+	<section class="slide" id="cluster-role">
+      <h2>MQ集群角色</h2>
+	  
+      <ul>
+        <li class="slide" id="cluster-role-broker">
+          <strong>Broker</strong>: 存储消息，转发消息，server
+        </li>
+		
+        <li class="slide" id="cluster-role-regcenter">
+          <strong>注册中心</strong>: 服务发现，Topic关系维护，消费关系维护，offset维护
+        </li>
+		
+        <li class="slide" id="cluster-role-producer">
+          <strong>Producer</strong>: 消息生产者，生产消息
+        </li>
+		
+        <li class="slide" id="cluster-role-consumer">
+          <strong>Consumer</strong>: 消息消费者，消费消息
+        </li>
+		
+        <li class="slide" id="cluster-role-relation">
+          <strong>关系图</strong>: <img src="./images/cluster-role-relation.png" alt="clusterRoleRelation">
+        </li>
+      </ul>
+    </section>
+
+	<section class="slide" id="clusterTopicMultiQueue-img">
+      <h2>集群发布/订阅</h2>
+      <img src="./images/clusterMQ-pc.png" alt="clusterTopicMultiQueue">
+    </section>
+	
+    <section class="slide" id="clusterTopicMultiQueue-remark">
+      <h2>集群发布/订阅</h2>
+
+      <ul>
+        <li>
+          <strong>RPC通信</strong>: NIO、协议
+        </li>
+
+        <li>
+          <strong>服务发现</strong>: 注册中心
+        </li>
+		
+		<li>
+          <strong>消费关系</strong>: 
+        </li>
+
+        <li>
+          <strong>消费进度</strong>: 
+        </li>
+      </ul>
+	  
+	  <h2 class="slide" id="clusterTopicMultiQueue-remark-cluster">如何做高可用？</h2>
+    </section>
+	
+	<section class="slide" id="MQ-HA-img">
+      <h2>MQ高可用</h2>
+      <img src="./images/MQ-HA-pc.png" alt="MQ-HA-Producer-Consumer">
+    </section>
+	
+    <section class="slide" id="MQ-HA-remark">
+      <h2>MQ高可用</h2>
+
+      <ul>
+        <li>
+          <strong>HA部署模式</strong>: Master/Slave、选举leader
+        </li>
+
+        <li>
+          <strong>HA关系维护</strong>: 注册中心
+        </li>
+
+        <li>
+          <strong>replication策略</strong>: 同步、异步
+        </li>
+
+        <li>
+          <strong>failover</strong>: 服务发现，主写
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="just-MQ-img">
+      <h2>MQ仅仅如此？</h2>
+      <img src="./images/think.jpg" alt="just-MQ">
+    </section>
+	
+	<section class="slide" id="MQ-features">
+      <h2>MQ难点剖析</h2>
+	  
+      <ul>
+        <li>
+          <strong>投递策略</strong>
+        </li>
+
+        <li>
+          <strong>可靠性</strong>
+        </li>
+
+        <li>
+          <strong>顺序消息</strong>
+        </li>
+
+        <li>
+          <strong>重复消息</strong>
+        </li>
+
+        <li>
+          <strong>事务消息</strong>
+        </li>
+
+        <li>
+          <strong>辅助功能</strong>
+        </li>
+      </ul>
+	  
+    </section>
+	
+	<section class="slide" id="Delivery-policies">
+      <h2>投递策略</h2>
+	  
+      <ul>
+        <li>
+          <strong>最多一次（At most Once ）</strong>: 
+		  <img src="./images/At-most-Once.png" alt="At-most-Once">
+		  <p class="slide" id="At-most-Once-remark">消息可能会丢，但绝不会重复传输</p>
+        </li>
+
+        <li class="slide" id="At-least-Once">
+          <strong>最少一次（At least Once）</strong>: 
+		  <p class="slide" id="At-least-Once-remark">消息绝不会丢，但可能会重复传输</p>
+        </li>
+
+        <li class="slide" id="Exactly-Once">
+          <strong>仅有一次（Exactly Once）</strong>: 每条消息肯定会被传输一次且仅传输一次，很多时候这是用户所想要的。
+        </li>
+      </ul>
+	  
+    </section>
+	
+	<section class="slide" id="message-ack">
+      <h2>可靠性</h2>
+	  <p>可用性、持久化、确认机制</p>
+	  <h2 class="slide" id="how-design-message-ack">如何设计确认机制？</h2>
+      <ul>
+        <li class="slide" id="message-ack-retry">
+          <strong>重试队列</strong>: 
+        </li>
+
+        <li class="slide" id="message-ack-non">
+          <strong>控制offset</strong>: 
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="orderly-message">
+      <h2>顺序消息</h2>
+	  
+      <ul>
+        <li class="slide" id="orderly-message-select-patition">
+          <strong>投递顺序</strong>: 自定义Producer的loadbalance规则，让一类消息投递到同一个Queue中
+        </li>
+		
+        <li class="slide" id="orderly-message-sorted">
+          <strong>消息排序</strong>: 消息本身有序
+		  <img src="./images/sorted-message.png" alt="Sorted Message">
+        </li>
+      </ul>
+      <h4 class="slide" id="how-design-timing-message">？？？定时消息如何实现？？？</h4>
+    </section>
+	
+	<section class="slide" id="repeated-message">
+      <h2>重复消息</h2>
+	  <img src="./images/At-most-Once.png" alt="At-most-Once">
+      <ul>
+        <li class="slide" id="repeated-message-p1">
+          <strong>Broker去重</strong>
+        </li>
+
+        <li class="slide" id="repeated-message-p2">
+          <strong>Consumer去重</strong>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="transactional-message">
+      <h2>事务消息</h2>
+	  <img src="./images/transactional-message.png" alt="TransactionalMessage">
+      <ul>
+        <li class="slide" id="transactional-message-p1">
+          <strong>消息需要二阶段提交</strong>
+        </li>
+
+        <li class="slide" id="transactional-message-p2">
+          <strong>Broker需要记录事务状态</strong>
+        </li>
+
+        <li class="slide" id="transactional-message-p3">
+          <strong>Broker需要回查Producer状态</strong>
+        </li>
+
+        <li class="slide" id="transactional-message-p4">
+          <strong>Producer需要记录事务状态</strong>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="message-tools">
+      <h2>辅助功能</h2>
+	  
+      <ul>
+        <li class="slide" id="message-index">
+          <strong>消息索引</strong>: 查询消息
+        </li>
+		
+        <li class="slide" id="message-recall">
+          <strong>消息回溯</strong>: offset、时间
+        </li>
+
+        <li class="slide" id="message-trace">
+          <strong>消息轨迹</strong>: 消息的生命周期
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="message-findbug">
+      <h2>常见问题排查</h2>
+	  
+      <ul>
+        <li>
+          <strong>消息误消费</strong>: 环境问题，设置错误
+		  1.预发和线上共用同一个MQ，consumer group又是同一个;
+		  2.consumer group设置
+        </li>
+
+        <li>
+          <strong>丢消息</strong>: 
+		  1.ACK确认失败
+		  2.消费超时
+		  3.设置错误，RocketMQ同一consumer group消费不同的Topic
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="thanks">
+		<h2>Thanks</h2>
+		<ol>Q/A</ol>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="../../deck.js/jquery.min.js"></script>
+<script src="../../deck.js/core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="../../deck.js/extensions/menu/deck.menu.js"></script>
+<script src="../../deck.js/extensions/goto/deck.goto.js"></script>
+<script src="../../deck.js/extensions/status/deck.status.js"></script>
+<script src="../../deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="../../deck.js/extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+</body>
+</html>
