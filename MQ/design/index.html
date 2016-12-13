@@ -212,10 +212,32 @@
 	
     <section class="slide" id="single-optimize-patition">
       <h2>kafka分区数过多的问题</h2>
+	  <p class="slide" id="kafka-many-patition">顺序读、写变随机读、写</p>
 	  <p class="slide" id="RocketMQ-offset">RocketMQ解决方案：
       <img src="./images/RocketMQ-offset.png" alt="RocketMQOffset"></p>
-
-	  <h2 class="slide" id="single-optimize">单机还能优化吗？</h2>
+	  <p class="slide" id="RocketMQ-many-patition">问题：顺序读变随机读，会影响消费的吞吐量吗？</p>
+    </section>
+	
+    <section class="slide" id="single-optimize-other">
+	  <h2>单机还能优化吗？</h2>
+	  
+      <ul>
+        <li class="slide" id="cluster-optimize-other-mem">
+          <strong>内存优化</strong>: 增加内存
+        </li>
+		
+        <li class="slide" id="cluster-optimize-other-mem">
+          <strong>硬件支持</strong>: 部署多块磁盘、用固态硬盘(成本高)
+        </li>
+		
+        <li class="slide" id="cluster-optimize-other-hard">
+          <strong>磁盘读写优化</strong>: raid10(成本高)
+        </li>
+		
+        <li class="slide" id="cluster-optimize-other-design">
+          <strong>设计上优化</strong>: 想不出来？
+        </li>
+      </ul>
 	  <h2 class="slide" id="single-to-cluster">如何摆脱单点迈向集群？</h2>
     </section>
 	
@@ -268,6 +290,11 @@
 
         <li>
           <strong>消费进度</strong>: 
+		  <p>
+		  1.Broker维护
+		  <br>
+		  2.Consumer维护
+		  </p>
         </li>
       </ul>
 	  
@@ -362,14 +389,35 @@
 	<section class="slide" id="message-ack">
       <h2>可靠性</h2>
 	  <p>可用性、持久化、确认机制</p>
-	  <h2 class="slide" id="how-design-message-ack">如何设计确认机制？</h2>
+	  <h2 class="slide" id="how-design-message-ack">如何设计可靠的确认机制？</h2>
       <ul>
-        <li class="slide" id="message-ack-retry">
-          <strong>重试队列</strong>: 
+        <li class="slide" id="message-ack-athread-sync">
+          <strong>单线程同步ack</strong>: 同步更新offset
+		  <p>
+		  这里的单线程是指单线程消费同一队列/分区
+		  <br>
+		  1.单条消息消费
+		  <br>
+		  2.多条消息顺序消费
+		  </p>
+        </li>
+		
+        <li class="slide" id="message-ack-athread-async">
+          <strong>单线程异步ack</strong>: 适合pull模型
+		  <p>
+		  1.pull带上offset
+		  <br>
+		  2.Consumer异步维护offset(ack)
+		  </p>
         </li>
 
-        <li class="slide" id="message-ack-non">
-          <strong>控制offset</strong>: 
+        <li class="slide" id="message-ack-multithread-sync">
+          <strong>多线程同步ack</strong>: 适合push模型
+		  <p>这里的多线程是指多个线程(可以在不同的进程)消费同一队列/分区</p>
+        </li>
+
+        <li class="slide" id="message-ack-multithread-async">
+          <strong>多线程异步ack</strong>: 得不偿失
         </li>
       </ul>
     </section>
@@ -380,11 +428,14 @@
       <ul>
         <li class="slide" id="orderly-message-select-patition">
           <strong>投递顺序</strong>: 自定义Producer的loadbalance规则，让一类消息投递到同一个Queue中
+		  <p class="slide" id="orderly-message-select-patition-remark">网络分区很难保证！！！</p>
         </li>
 		
         <li class="slide" id="orderly-message-sorted">
           <strong>消息排序</strong>: 消息本身有序
+		  <p class="slide" id="orderly-message-sorted-design">
 		  <img src="./images/sorted-message.png" alt="Sorted Message">
+		  </p>
         </li>
       </ul>
       <h4 class="slide" id="how-design-timing-message">？？？定时消息如何实现？？？</h4>
@@ -393,13 +444,14 @@
 	<section class="slide" id="repeated-message">
       <h2>重复消息</h2>
 	  <img src="./images/At-most-Once.png" alt="At-most-Once">
+	  <p class="slide" id="repeated-message-design">给消息弄个ID，去重！！！</p>
       <ul>
         <li class="slide" id="repeated-message-p1">
           <strong>Broker去重</strong>
         </li>
 
         <li class="slide" id="repeated-message-p2">
-          <strong>Consumer去重</strong>
+          <strong>Consumer去重（幂等）</strong>
         </li>
       </ul>
     </section>
@@ -444,21 +496,35 @@
       </ul>
     </section>
 	
-	<section class="slide" id="message-findbug">
-      <h2>常见问题排查</h2>
+	<section class="slide" id="questions">
+      <h2>常见问题</h2>
 	  
       <ul>
-        <li>
+        <li class="slide" id="questions-consume-error">
           <strong>消息误消费</strong>: 环境问题，设置错误
-		  1.预发和线上共用同一个MQ，consumer group又是同一个;
-		  2.consumer group设置
+		  <p>
+		  eg：预发和线上共用同一个MQ，consumer group又是同一个
+		  </p>
         </li>
 
-        <li>
+        <li class="slide" id="questions-lost-message">
           <strong>丢消息</strong>: 
+		  <p>
 		  1.ACK确认失败
-		  2.消费超时
+		  <br>
+		  2.消费超时(次数、时间)
+		  <br>
 		  3.设置错误，RocketMQ同一consumer group消费不同的Topic
+		  </p>
+        </li>
+		
+        <li class="slide" id="questions-lost-monitor">
+          <strong>消息监控</strong>: 
+		  <p>
+		  1.MQ监控
+		  <br>
+		  2.业务方监控(Producer、Consumer)
+		  </p>
         </li>
       </ul>
     </section>
