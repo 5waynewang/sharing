@@ -138,13 +138,17 @@
         <li>
           <strong>消费关系维护</strong>: Consumer、Topic、Queue、offset
         </li>
-
+		
         <li>
-          <strong>消息存储</strong>: 定期、定量、同步、异步
+          <strong>消费模型</strong>: pull/push
         </li>
 
         <li>
-          <strong>消息堆积</strong>: 消息过期
+          <strong>消息存储</strong>: 同步、异步、定期、定量
+        </li>
+
+        <li>
+          <strong>消息堆积</strong>: 消息过期策略
         </li>
       </ul>
 
@@ -175,15 +179,11 @@
         </li>
 		
         <li>
-          <strong>负载均衡</strong>: Provider轮询写，Consumer平均消费
+          <strong>负载均衡</strong>: Producer轮询写，Consumer平均消费
         </li>
 		
         <li>
           <strong>消息的读写</strong>: 代理到单个队列的读写
-        </li>
-		
-        <li>
-          <strong>消费模型pull/push</strong>: 双重保证，消费pull通知push
         </li>
       </ul>
     </section>
@@ -203,7 +203,7 @@
         </li>
 		
         <li>
-          <strong>负载均衡</strong>: Provider轮询写，Consumer全部消费（无法loadbalance）
+          <strong>负载均衡</strong>: Producer轮询写，Consumer全部消费（无法loadbalance）
         </li>
       </ul>
 	  
@@ -215,7 +215,7 @@
 	  <p class="slide" id="kafka-many-patition">顺序读、写变随机读、写</p>
 	  <p class="slide" id="RocketMQ-offset">RocketMQ解决方案：
       <img src="./images/RocketMQ-offset.png" alt="RocketMQOffset"></p>
-	  <p class="slide" id="RocketMQ-many-patition">问题：顺序读变随机读，会影响消费的吞吐量吗？</p>
+	  <p class="slide" id="RocketMQ-many-patition">问题：顺序读变随机读(同一topic消息在commit log中不是连续的)，会影响消费的吞吐量吗？</p>
     </section>
 	
     <section class="slide" id="single-optimize-other">
@@ -231,11 +231,11 @@
         </li>
 		
         <li class="slide" id="cluster-optimize-other-hard">
-          <strong>磁盘读写优化</strong>: raid10(成本高)
+          <strong>磁盘读写优化</strong>: raid(成本高)
         </li>
 		
         <li class="slide" id="cluster-optimize-other-design">
-          <strong>设计上优化</strong>: 想不出来？
+          <strong>设计上优化</strong>: <p class="slide" id="cluster-optimize-other-design-non">想不出来？</p>
         </li>
       </ul>
 	  <h2 class="slide" id="single-to-cluster">如何摆脱单点迈向集群？</h2>
@@ -284,17 +284,21 @@
           <strong>服务发现</strong>: 注册中心
         </li>
 		
-		<li>
-          <strong>消费关系</strong>: 
-        </li>
-
         <li>
-          <strong>消费进度</strong>: 
-		  <p>
-		  1.Broker维护
+          <strong>负载均衡</strong>: Topic、Broker、Queue
+        </li>
+		
+		<li>
+          <strong>消费关系</strong>: Consumer、Topic、Queue、offset
 		  <br>
-		  2.Consumer维护
-		  </p>
+		  <br>
+		  Broker维护消费进度：可靠性
+		  <br>
+		  Consumer维护消费进度：吞吐量
+        </li>
+		
+        <li>
+          <strong>消费模型pull/push</strong>: 双重保证，消费pull通知push
         </li>
       </ul>
 	  
