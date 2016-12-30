@@ -315,19 +315,15 @@
 
       <ul>
         <li>
-          <strong>HA部署模式</strong>: Master/Slave、选举leader
+          <strong>HA部署模式</strong>: Master/Slave、Leader Election
         </li>
 
         <li>
-          <strong>HA关系维护</strong>: 注册中心
+          <strong>failover</strong>: replica broker、replica queue
         </li>
-
+		
         <li>
-          <strong>replication策略</strong>: 同步、异步
-        </li>
-
-        <li>
-          <strong>failover</strong>: 服务发现，主写
+          <strong>replication策略</strong>: 同步commit、异步pull by offset
         </li>
       </ul>
     </section>

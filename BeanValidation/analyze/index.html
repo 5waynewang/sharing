@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  <title>聊聊Bean Validation</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/style/web-2.0.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="../../deck.js/core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="../../deck.js/modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+
+    <section class="slide" id="index">
+      <h2>聊聊Bean Validation</h2>
+	  <h2>-----详解Bean Validation</h2>
+      <ol>
+		  <p>
+	Name : 王伟
+	<br>
+	Department : 理财技术部
+	<br>
+	Email: hzwangwei6@corp.netease.com
+		  </p>
+      </ol>
+    </section>
+	
+    <section class="slide" id="what">
+      <h2>Bean Validation是什么？</h2>
+	  <p>Java Bean Validation 是一个数据验证规范，Java EE 6的子规范</p>
+	  <p>参考：https://en.wikipedia.org/wiki/Bean_Validation</p>
+	  <p>验证对象属性、方法入参、方法返回值的合法性</p>
+	  <p>实现者：<strong>hibernate-validator</strong></p>
+      <h2 class="slide" id="how-use">怎么用Bean Validation？</h2>
+    </section>
+	
+	<section class="slide" id="how-validate-bean">
+	  <h2>使用Bean Validation验证对象的属性</h2>
+	  <pre><code>
+// 1.有个POJO
+public class Person {
+	// 2.使用Bean Validation constraint注解定义属性
+	@NotBlank
+	@Length(min = 1, max = 32)
+	private String       name;
+	@NotNull
+	@Min(value = 1)
+	private Integer      age;
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Integer getAge() {
+		return age;
+	}
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+}
+public static void main(String[] args) {
+	// 3.获取目标对象实例
+	Person person = getTargetBeanInstance();
+	// 4.获取bean validation验证类(单例即可)
+	ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+	Validator validator = validatorFactory.getValidator();
+	// 5.验证对象属性
+	Set&lt;ConstraintViolation&lt;Person&gt;&gt; set = validator.validate(person);
+	// 6.输出验证结果
+	for (ConstraintViolation&lt;Person&gt; constraintViolation : set) {
+		System.out.println(constraintViolation.getMessage());
+	}
+}
+	  </code></pre>
+    </section>
+	
+	<section class="slide" id="how-validate-method-parm">
+      <h2>使用Bean Validation验证方法入参</h2>
+	  <pre><code>
+public interface TestService {
+	// 1.使用Bean Validation constraint注解定义方法入参
+	Person create(@NotNull @Valid Person person, @NotBlank String channel);
+}
+public static void main(String[] args) throws Exception {
+	// 2.获取到目标类的实例
+	TestService testService = getTargetService();
+	// 3.获取目标类需要验证的方法
+	Method method = testService.getClass().getMethod("create", Person.class, String.class);
+	// 4.获取目标方法的入参
+	Object[] parameterValues = { person, channel };
+	// 5.获取bean validation验证类(单例即可)
+	ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+	Validator validator = validatorFactory.getValidator();
+	// 6.验证目标方法的入参
+	Set&lt;ConstraintViolation&lt;TestService&gt;&gt; set = validator.forExecutables().validateParameters(testService, method, parameterValues, new Class&lt;?&gt;[0]);
+	// 7.输出验证结果
+	for (ConstraintViolation&lt;TestService&gt; constraintViolation : set) {
+		System.out.println(constraintViolation);
+	}
+}
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="how-validate-method-retval">
+      <h2>使用Bean Validation验证方法返回值</h2>
+	  <pre><code>
+public interface TestService {
+	// 1.使用Bean Validation constraint注解定义方法返回值
+	@NotNull @Valid Person create();
+}
+public static void main(String[] args) throws Exception {
+	// 2.获取到目标类的实例
+	TestService testService = getTargetService();
+	// 3.获取目标类需要验证的方法
+	Method method = testService.getClass().getMethod("create");
+	// 4.获取目标方法的返回值
+	Object returnValue = method.invoke(object);
+	// 5.获取bean validation验证类(单例即可)
+	ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+	Validator validator = validatorFactory.getValidator();
+	// 6.验证目标方法的返回值
+	Set&lt;ConstraintViolation&lt;TestService&gt;&gt; set = validator.forExecutables().validateReturnValue(testService, method, returnValue, new Class&lt;?&gt;[0]);
+	// 7.输出验证结果
+	for (ConstraintViolation&lt;TestService&gt; constraintViolation : set) {
+		System.out.println(constraintViolation);
+	}
+}
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="how-work">
+      <h2>Bean Validation工作机制</h2>
+	 
+	  <ul>
+        <li>
+          <strong>constraint注解</strong>
+        </li>
+
+        <li>
+          <strong>constraint注解验证器</strong>
+        </li>
+
+        <li>
+          <strong>javax.validation.Validator实例化过程</strong>
+        </li>
+
+        <li>
+          <strong>javax.validation.Validator验证过程</strong>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="constraint-annotation-size">
+      <h2>Bean Validation工作机制</h2>
+      <h3>----- constraint注解之@Size</h3>
+	  <h5>共有-所有constraint注解都必须有的; 私有-个性化，当前注解专有</h5>
+	  <pre><code>
+@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+@Retention(RUNTIME)
+@Documented
+@Constraint(validatedBy = { }) // 公有：当前约束注解的验证器
+public @interface Size {
+	// 私有：最小个数
+	int min() default 0;
+	// 私有：最大个数
+	int max() default Integer.MAX_VALUE;
+	// 公有：验证不通过的输出消息，支持占位符，例如："个数必须在{min}和{max}之间"
+	String message() default "{javax.validation.constraints.Size.message}";
+	// 公有：约束注解在验证时所属的组别
+	Class<?>[] groups() default { };
+	// 公有：约束注解的有效负载，目前没有处
+	Class<? extends Payload>[] payload() default { };
+	// 公有：多约束，必须满足数组中的每个约束才算通过
+	@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+	@Retention(RUNTIME)
+	@Documented
+	@interface List {
+		Size[] value();
+	}
+}
+	  </code></pre>
+    </section>
+	
+	<section class="slide" id="constraint-annotation-size-validatedBy">
+      <h2>Bean Validation工作机制</h2>
+      <h3>----- constraint注解验证器</h3>
+	  <pre><code>
+// 1.constraint注解验证器必须实现的接口：javax.validation.ConstraintValidator
+public class SizeValidatorForCollection implements ConstraintValidator<Size, Collection<?>> {
+	private int min;
+	private int max;
+	@Override
+	public void initialize(Size parameters) {
+		// 2.初始化注解的私有属性，验证时会用到
+		min = parameters.min();
+		max = parameters.max();
+	}
+	@Override
+	// 3.验证有效性
+	public boolean isValid(Collection<?> collection, ConstraintValidatorContext constraintValidatorContext) {
+		if ( collection == null ) {
+			return true;
+		}
+		int length = collection.size();
+		return length >= min && length <= max;
+	}
+}
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="BeanValidation-instance-Validator">
+      <h2>Bean Validation工作机制-Validator实例化</h2>
+	  <img src="./images/BeanValidation.png" alt="BeanValidation">
+    </section>
+
+	<section class="slide" id="BeanValidation-validate">
+      <h2>Bean Validation工作机制</h2>
+      <h4>----- javax.validation.Validator验证过程</h4>
+	  <ul>
+        <li>
+          <strong>Bean Validation组</strong>
+        </li>
+        <li>
+          <strong>Bean Validation组序列</strong>
+        </li>
+	  </ul>
+    </section>
+	
+	<section class="slide" id="group">
+      <h2>Bean Validation组</h2>
+	  <p>group的概念是为了对约束分组，进而可以分组验证</p>
+	  <p>默认group：<strong>javax.validation.groups.Default</strong></p>
+	  <p>注意：组也有继承的属性。对某一组别进行约束验证的时候，也会对其所继承的基类进行验证。</p>
+	  <pre><code>
+interface GroupA {}
+interface GroupA1 extends GroupA {}
+interface GroupB {}
+class Person {
+    @NotBlank(groups = GroupA.class)
+    private String       name;
+
+    @NotNull(groups = {GroupA1.class, GroupB.class})
+    private Integer      age;
+
+    @NotBlank(groups = GroupB.class)
+    private String       gender;
+}
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="group">
+      <h2>Bean Validation组序列</h2>
+      <h5>----- javax.validation.GroupSequence</h5>
+	  <h5>核心作用：定义组的验证顺序</h5>
+	  <pre><code>
+interface GroupA {}
+interface GroupB {}
+interface GroupC {}
+@GroupSequence({GroupA.class, GroupB.class, GroupC.class}) 
+interface Group {} 
+class Person {
+	@NotBlank(groups = GroupA.class)
+	private String       name;
+	@NotNull(groups = {GroupB.class})
+	private Integer      age;
+	@NotNull(groups = {GroupC.class})
+	@Valid
+	private Address       address;
+}
+	  </code></pre>
+    </section>
+	
+	<section class="slide" id="BeanValidation-validate2">
+      <h2>Bean Validation工作机制</h2>
+      <h4>----- javax.validation.Validator验证过程</h4>
+      <p style="color:red">Set&lt;ConstraintViolation&lt;T&gt;&gt; validate(T object, Class&lt;?&gt;... groups)</p>
+	  <ul>
+        <li>
+          <strong>判断是否有约束，即是否使用了Bean Validation注解</strong>
+		  <p>判断的过程中会创建class与BeanMetaData的关系并缓存</p>
+        </li>
+        <li>
+          <strong>计算验证顺序，参考DefaultValidationOrder</strong>
+		  <p>先Group再Group的父类; 先Group再GroupSequence; 先当前Bean再级联Bean;</p>
+        </li>
+        <li>
+          <strong>按顺序分组验证</strong>
+		  <p>反射获取到验证的值，使用@Constraint中定义的validatedBy(验证器，需要实现ConstraintValidator)来验证值的合法性</p>
+        </li>
+        <li>
+          <strong>约束违规的消息解析，参考：AbstractMessageInterpolator</strong>
+		  <p>消息解析有优先顺序，ValidationMessages*.properties &lt; ContributorValidationMessages*.properties &lt; org.hibernate.validator.ValidationMessages*.properties</p>
+        </li>
+        <li class="slide" id="BeanValidation-validate2-fail-fast">
+		  <strong>BTW</strong>
+		  <p>
+		  开启fail fast模式：configure.addProperty(HibernateValidatorConfiguration.FAIL_FAST, "true");
+		  </p>
+        </li>
+	  </ul>
+    </section>
+
+	<section class="slide" id="BeanValidationIntro">
+      <h2>Bean Validation回顾</h2>
+	  
+	  <ul>
+        <li class="slide" id="BeanValidationIntro-constraintAnnotation">
+          <strong>constraint annotation</strong>：约束注解
+        </li>
+
+        <li class="slide" id="BeanValidationIntro-validateBy">
+          <strong>constraint annotation validateBy</strong>：验证器
+        </li>
+
+        <li class="slide" id="BeanValidationIntro-Group">
+          <strong>Bean Validation 组</strong>：分组、定义顺序
+        </li>
+
+        <li class="slide" id="BeanValidationIntro-Validator">
+          <strong>javax.validation.Validator</strong>：实例化过程
+        </li>
+
+        <li class="slide" id="BeanValidationIntro-Validator">
+          <strong>javax.validation.Validator</strong>：验证过程
+        </li>
+      </ul>
+	  
+	  <h2 class="slide" id="BeanValidationIntro-how-application">Bean Validation如何做企业级应用？</h2>
+    </section>
+
+	<section class="slide" id="work-application">
+      <h2>Bean Validation企业级应用</h2>
+	  
+	  <ul>
+        <li>
+          <strong>如何定义自己的约束？</strong>
+        </li>
+		
+        <li>
+          <strong>spring-mvc如何集成Bean Validation</strong>
+        </li>
+
+        <li>
+          <strong>普通方法如何集成Bean Validation</strong>
+        </li>
+
+        <li>
+          <strong>dubbo</strong>：RPC
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="custom-1">
+      <h2>如何自定义Bean Validation？</h2>
+	  <p>
+          <strong>第一步：定义约束注解</strong>
+		  <pre><code>
+@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+@Retention(RUNTIME)
+@Documented
+@Constraint(validatedBy = { PastExtValidatorForDate.class, PastExtValidatorForCalendar.class })
+public @interface PastExt {
+
+    String value();
+
+    String message() default "{com.netease.validator.constraints.PastExt.message}";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+
+    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+    @Retention(RUNTIME)
+    @Documented
+    @interface List {
+        PastExt[] value();
+    }
+}
+		  </code></pre>
+      </p>
+    </section>
+	
+	<section class="slide" id="custom-2">
+      <h2>如何自定义Bean Validation？</h2>
+	  <p>
+          <strong>第二步：定义ConstraintValidator</strong>
+		  <pre><code>
+// 必须实现接口：ConstraintValidator，PastExt是约束注解，Date是约束的值类型
+public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Date> {
+
+    String value;
+
+    @Override
+    public void initialize(PastExt constraintAnnotation) {
+        value = constraintAnnotation.value();
+    }
+
+    @Override
+    public boolean isValid(Date value, ConstraintValidatorContext context) {
+        // null values are valid
+        if (value == null) {
+            return true;
+        }
+        return value.getTime() < DateHelper.parseDate(this.value).getTime();
+    }
+}
+		  </code></pre>
+      </p>
+    </section>
+	
+	<section class="slide" id="spring-mvc">
+      <h2>spring-mvc如何集成Bean Validation</h2>
+	  <ul>
+        <li>
+          <strong>org.springframework.validation.beanvalidation.LocalValidatorFactoryBean</strong>
+		  <p>创建javax.validation.Validator实例，使用org.springframework.context.MessageSource替代ValidationMessages*.properties</p>
+        </li>
+
+        <li>
+          <strong>org.springframework.web.method.support.HandlerMethodArgumentResolver</strong>
+		  <p>通过参数解析器校验请求参数，spring mvc支持Bean Validation的参数解析器如下：</p>
+          <strong>org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor</strong>
+          <strong>org.springframework.web.method.annotation.ModelAttributeMethodProcessor</strong>
+		  <p>@RequestBody @ResponseBody @ModelAttribute</p>
+		  <img src="./images/resolveArgument.png" alt="resolveArgument">
+		  <img src="./images/validateIfApplicable.png" alt="validateIfApplicable">
+        </li>
+      </ul>
+    </section>
+
+	<section class="slide" id="spring-mvc-define-BeanValidation">
+      <h2>spring-mvc如何使用Bean Validation</h2>
+	  <ul>
+        <li>
+          <strong>使用Bean Validation约束注解定义请求参数</strong>
+		  <img src="./images/test2.png" alt="test2">
+        </li>
+
+        <li>
+          <strong>Bean Validation校验失败异常处理</strong>：@ControllerAdvice
+		  <img src="./images/ExceptionHandler.png" alt="ExceptionHandler">
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="common-method">
+      <h2>普通方法如何集成Bean Validation</h2>
+	  <p class="slide" id="common-method-howUseBeanValidation">思路：通过AOP拦截方法执行计划，做参数校验</p>
+	  <p class="slide" id="common-method-exists">想偷懒有现成的吗？</p>
+	  <p class="slide" id="common-method-spring">org.springframework.validation.beanvalidation.MethodValidationPostProcessor</p>
+	  <p class="slide" id="common-method-spring-howUse">如何使用？</p>
+	  <p class="slide" id="common-method-spring-xml">
+	  xml配置：
+&lt;bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/&gt;
+	  </p>
+    </section>
+
+	<section class="slide" id="common-method-howWorking">
+      <h2>MethodValidationPostProcessor实现原理</h2>
+	  <ul>
+        <li>
+          <strong>BeanPostProcessor && 拦截@Validated</strong>
+        </li>
+		
+        <li>
+          <strong>MethodValidationInterceptor</strong>：校验方法入参以及返回值
+		  <img src="./images/validateReturnValueMethod.png" alt="validateReturnValueMethod">
+        </li>
+      </ul>
+
+      <h2 class="slide" id="common-method-howUseMVPP">如何用MethodValidationPostProcessor开发呢？</h2>
+	  <p class="slide" id="common-method-howUseMVPP-dev">
+		<strong>@Validated && Bean Validation constraint annotation && ConstraintViolationException异常处理</strong>
+	  </p>
+    </section>
+	
+	<section class="slide" id="dubbo-howUse">
+      <h2>dubbo如何集成Bean Validation</h2>
+	  <p>dubbo支持JSR303标准注解验证，具体可参考其<a href="http://dubbo.io/User+Guide-zh.htm#UserGuide-zh-%E5%8F%82%E6%95%B0%E9%AA%8C%E8%AF%81">官网</a></p>
+	  <p>ValidationFilter && JValidator</p>
+	  <ul>
+        <li>
+          <strong>Consumer端开启Bean Validation</strong>：
+		  <p>&lt;dubbo:reference id="xxxService" interface="x.xx.XXXService" validation="true" /&gt;</p>
+        </li>
+
+        <li>
+          <strong>Provider开启Bean Validation</strong>：
+		  <p>&lt;dubbo:service interface="x.xx.XXXService" ref="xxxService" validation="true" /&gt;</p>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="why-BeanValidation">
+	<h2>为什么使用Bean Validation</h2>
+	<p>方便编程的同时，提供统一的标准输出，统一规范</p>
+	<p>GIT：https://g.hz.netease.com/basiccomponents/validator</p>
+	<p>
+	<pre><code>
+{
+	"statusCode": 400,
+	"errorMsg": "姓名不能为空",
+	"data": null
+}
+	</pre></code>
+	</p>
+	</section>
+	
+	<section class="slide" id="question">
+      <h2>常见问题</h2>
+	  
+      <ul>
+        <li>
+          <strong>如何自定义错误消息？</strong>
+		  <p>根据优先级，eg：spring MessageSouce</p>
+        </li>
+
+        <li>
+          <strong>嵌套的对象为什么不做验证？</strong>
+		  <p>检查是否添加了注解：@Valid</p>
+        </li>
+
+        <li>
+          <strong>参数校验能否有一个不通过就返回，后面的不要再验证了？</strong>
+		  <p>开启failFast</p>
+		  <pre><code>
+Configuration&lt;?&gt; configure = Validation.byDefaultProvider().configure();
+configure.addProperty(HibernateValidatorConfiguration.FAIL_FAST, "true");
+Validator validator = configure.buildValidatorFactory().getValidator();
+		  </code></pre>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="thanks">
+		<h2>Thanks</h2>
+		<ol>Q/A</ol>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="../../deck.js/jquery.min.js"></script>
+<script src="../../deck.js/core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="../../deck.js/extensions/menu/deck.menu.js"></script>
+<script src="../../deck.js/extensions/goto/deck.goto.js"></script>
+<script src="../../deck.js/extensions/status/deck.status.js"></script>
+<script src="../../deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="../../deck.js/extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+</body>
+</html>
