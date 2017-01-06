@@ -210,7 +210,7 @@ public @interface Size {
       <h3>----- constraint注解验证器</h3>
 	  <pre><code>
 // 1.constraint注解验证器必须实现的接口：javax.validation.ConstraintValidator
-public class SizeValidatorForCollection implements ConstraintValidator<Size, Collection<?>> {
+public class SizeValidatorForCollection implements ConstraintValidator&lt;Size, Collection&lt;?&gt;&gt; {
 	private int min;
 	private int max;
 	@Override
@@ -221,12 +221,12 @@ public class SizeValidatorForCollection implements ConstraintValidator<Size, Col
 	}
 	@Override
 	// 3.验证有效性
-	public boolean isValid(Collection<?> collection, ConstraintValidatorContext constraintValidatorContext) {
+	public boolean isValid(Collection&lt;?&gt; collection, ConstraintValidatorContext constraintValidatorContext) {
 		if ( collection == null ) {
 			return true;
 		}
 		int length = collection.size();
-		return length >= min && length <= max;
+		return length &gt;= min && length &lt;= max;
 	}
 }
 	  </code></pre>
@@ -254,7 +254,7 @@ public class SizeValidatorForCollection implements ConstraintValidator<Size, Col
       <h2>Bean Validation组</h2>
 	  <p>group的概念是为了对约束分组，进而可以分组验证</p>
 	  <p>默认group：<strong>javax.validation.groups.Default</strong></p>
-	  <p>注意：组也有继承的属性。对某一组别进行约束验证的时候，也会对其所继承的基类进行验证。</p>
+	  <p>注意：组也有继承的属性。对某组进行约束验证的时候，也会对其所继承的组<strong>(父类)</strong>进行验证。</p>
 	  <pre><code>
 interface GroupA {}
 interface GroupA1 extends GroupA {}
