@@ -519,8 +519,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
 	
 	<section class="slide" id="why-BeanValidation">
 	<h2>为什么使用Bean Validation</h2>
-	<p>提供统一的标准输出，统一规范，最终方便coding</p>
-	<p>GIT：https://g.hz.netease.com/basiccomponents/validator</p>
+	<h3>Why not?</h3>
 	<p>
 	<pre><code>
 {
@@ -530,6 +529,13 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
 }
 	</pre></code>
 	</p>
+	
+<p>如果公司内所有的微服务，对于参数合法性校验都如上这么输出，联调是不是都觉得很舒服？</p>
+
+<p>如果公司内有这么一个公共jar包，所有的应用只需加一行配置，统一封装参数校验，是不是优雅很多？会省事很多？</p>
+
+<p class="slide" id="why-BeanValidation-suggest">使用Bean Validation最终的目的是为了统一规范，标准输出，如果你的项目里已经有了类似的标准规范，那就没必要硬来使用Bean Validation了</p>
+
 	</section>
 	
 	<section class="slide" id="question">
