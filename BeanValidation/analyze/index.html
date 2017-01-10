@@ -54,7 +54,7 @@
 	  <p>参考：https://en.wikipedia.org/wiki/Bean_Validation</p>
 	  <p>验证对象属性、方法入参、方法返回值的合法性</p>
 	  <p>实现者：<strong>hibernate-validator</strong></p>
-      <h2 class="slide" id="how-use">怎么用Bean Validation？</h2>
+      <h2 class="slide" id="how-use">Bean Validation如何使用？</h2>
     </section>
 	
 	<section class="slide" id="how-validate-bean">
@@ -177,24 +177,25 @@ public static void main(String[] args) throws Exception {
 	<section class="slide" id="constraint-annotation-size">
       <h2>Bean Validation工作机制</h2>
       <h3>----- constraint注解之@Size</h3>
-	  <h5>共有-所有constraint注解都必须有的; 私有-个性化，当前注解专有</h5>
+	  <h5>java里的注解是没有继承关系的，所以constraint注解规范实际是在运行期间靠ConstraintHelper.isConstraintAnnotation方法做校验的，必须定义的属性有三个：message、groups、payload（有兴趣可以看下源码），姑且把所有constraint注解都必须定义的属性叫做“公共属性”， 当前constraint注解个性化的属性叫做“私有属性”</h5>
 	  <pre><code>
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = { }) // 公有：当前约束注解的验证器
+@Constraint(validatedBy = { }) // 公共：当前约束注解的验证器
 public @interface Size {
-	// 私有：最小个数
+	// 私有属性：最小个数
 	int min() default 0;
-	// 私有：最大个数
+	// 私有属性：最大个数
 	int max() default Integer.MAX_VALUE;
-	// 公有：验证不通过的输出消息，支持占位符，例如："个数必须在{min}和{max}之间"
+	// 公共属性：验证不通过的输出消息，支持占位符，例如："个数必须在{min}和{max}之间"
 	String message() default "{javax.validation.constraints.Size.message}";
-	// 公有：约束注解在验证时所属的组别
+	// 公共属性：约束注解在验证时所属的组别
 	Class<?>[] groups() default { };
-	// 公有：约束注解的有效负载，目前没有处
+	// 公共属性：约束注解的有效负载，目前没有处
 	Class<? extends Payload>[] payload() default { };
-	// 公有：多约束，必须满足数组中的每个约束才算通过
+	// 多约束，必须满足数组中的每个约束才算通过
+	// 非必选，能用到的不多，但是每个constraint注解都定义了该注解，姑且当作公共吧
 	@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 	@Retention(RUNTIME)
 	@Documented
@@ -252,9 +253,9 @@ public class SizeValidatorForCollection implements ConstraintValidator&lt;Size, 
 	
 	<section class="slide" id="group">
       <h2>Bean Validation组</h2>
-	  <p>group的概念是为了对约束分组，进而可以分组验证</p>
-	  <p>默认group：<strong>javax.validation.groups.Default</strong></p>
-	  <p>注意：组也有继承的属性。对某组进行约束验证的时候，也会对其所继承的组<strong>(父类)</strong>进行验证。</p>
+	  <p>Bean Validation组的概念是为了对约束分组，进而可以分组验证</p>
+	  <p>默认组：<strong>javax.validation.groups.Default</strong></p>
+	  <p>注意：组也有继承的属性，对某组进行约束验证的时候，也会对其所继承的组<strong>(父类)</strong>进行验证。</p>
 	  <pre><code>
 interface GroupA {}
 interface GroupA1 extends GroupA {}
@@ -300,7 +301,7 @@ class Person {
       <p style="color:red">Set&lt;ConstraintViolation&lt;T&gt;&gt; validate(T object, Class&lt;?&gt;... groups)</p>
 	  <ul>
         <li>
-          <strong>判断是否有约束，即是否使用了Bean Validation注解</strong>
+          <strong>判断目标Bean是否有约束，即是否使用了Bean Validation注解</strong>
 		  <p>判断的过程中会创建class与BeanMetaData的关系并缓存</p>
         </li>
         <li>
@@ -313,7 +314,7 @@ class Person {
         </li>
         <li>
           <strong>约束违规的消息解析，参考：AbstractMessageInterpolator</strong>
-		  <p>消息解析有优先顺序，ValidationMessages*.properties &lt; ContributorValidationMessages*.properties &lt; org.hibernate.validator.ValidationMessages*.properties</p>
+		  <p>消息解析有优先顺序，ValidationMessages*.properties &gt; ContributorValidationMessages*.properties &gt; org.hibernate.validator.ValidationMessages*.properties</p>
         </li>
         <li class="slide" id="BeanValidation-validate2-fail-fast">
 		  <strong>BTW</strong>
@@ -379,18 +380,19 @@ class Person {
 	  <p>
           <strong>第一步：定义约束注解</strong>
 		  <pre><code>
+// 定义一个日期约束，必须是晚于指定日期
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = { PastExtValidatorForDate.class, PastExtValidatorForCalendar.class })
+@Constraint(validatedBy = { PastExtValidatorForDate.class, PastExtValidatorForCalendar.class })//公共：验证器，可以多个
 public @interface PastExt {
-
+	// 私有：指定日期
     String value();
-
+	// 公共：验证不通过的输出消息
     String message() default "{com.netease.validator.constraints.PastExt.message}";
-
+	// 公共：
     Class<?>[] groups() default {};
-
+	// 公共：
     Class<? extends Payload>[] payload() default {};
 
     @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
@@ -418,7 +420,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
     public void initialize(PastExt constraintAnnotation) {
         value = constraintAnnotation.value();
     }
-
+	// 具体的约束验证逻辑
     @Override
     public boolean isValid(Date value, ConstraintValidatorContext context) {
         // null values are valid
@@ -483,7 +485,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
       <h2>MethodValidationPostProcessor实现原理</h2>
 	  <ul>
         <li>
-          <strong>BeanPostProcessor && 拦截@Validated</strong>
+          <strong>BeanPostProcessor && 拦截@Validated修饰的类（可以从父类继承注解）</strong>
         </li>
 		
         <li>
@@ -517,7 +519,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
 	
 	<section class="slide" id="why-BeanValidation">
 	<h2>为什么使用Bean Validation</h2>
-	<p>方便编程的同时，提供统一的标准输出，统一规范</p>
+	<p>提供统一的标准输出，统一规范，最终方便coding</p>
 	<p>GIT：https://g.hz.netease.com/basiccomponents/validator</p>
 	<p>
 	<pre><code>
@@ -545,7 +547,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
         </li>
 
         <li>
-          <strong>参数校验能否有一个不通过就返回，后面的不要再验证了？</strong>
+          <strong>参数校验能否有一个不通过就返回，后续属性就不要再验证了？</strong>
 		  <p>开启failFast</p>
 		  <pre><code>
 Configuration&lt;?&gt; configure = Validation.byDefaultProvider().configure();
