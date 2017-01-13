@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=1024, user-scalable=no">
 
-  <title>聊聊Bean Validation</title>
+  <title>详解Bean Validation</title>
 
   <!-- Required stylesheet -->
   <link rel="stylesheet" media="screen" href="../../deck.js/core/deck.core.css">
@@ -35,22 +35,16 @@
     <!-- Begin slides. Just make elements with a class of slide. -->
 
     <section class="slide" id="index">
-      <h2>聊聊Bean Validation</h2>
-	  <h2>-----详解Bean Validation</h2>
-      <ol>
-		  <p>
-	Name : 王伟
-	<br>
-	Department : 理财技术部
-	<br>
-	Email: hzwangwei6@corp.netease.com
-		  </p>
-      </ol>
+      <h2>详解Bean Validation</h2>
+      <ol>Name : 王伟</ol>
+	  <ol>Department : 理财技术部</ol>
+	  <ol>Email : hzwangwei6@corp.netease.com</ol>
+	  <ol>当前ppt关联的<a href="https://my.oschina.net/u/3211616/blog/821343"/>博客地址</a></ol>
     </section>
 	
     <section class="slide" id="what">
       <h2>Bean Validation是什么？</h2>
-	  <p>Java Bean Validation 是一个数据验证规范，Java EE 6的子规范</p>
+	  <p>Bean Validation 是一个数据验证规范，Java EE 6的子规范</p>
 	  <p>参考：https://en.wikipedia.org/wiki/Bean_Validation</p>
 	  <p>验证对象属性、方法入参、方法返回值的合法性</p>
 	  <p>实现者：<strong>hibernate-validator</strong></p>
@@ -412,7 +406,7 @@ public @interface PastExt {
           <strong>第二步：定义ConstraintValidator</strong>
 		  <pre><code>
 // 必须实现接口：ConstraintValidator，PastExt是约束注解，Date是约束的值类型
-public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Date> {
+public class PastExtValidatorForDate implements ConstraintValidator&lt;PastExt, Date&gt; {
 
     String value;
 
@@ -427,7 +421,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
         if (value == null) {
             return true;
         }
-        return value.getTime() < DateHelper.parseDate(this.value).getTime();
+        return value.getTime() &lt; DateHelper.parseDate(this.value).getTime();
     }
 }
 		  </code></pre>
@@ -455,7 +449,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
     </section>
 
 	<section class="slide" id="spring-mvc-define-BeanValidation">
-      <h2>spring-mvc如何使用Bean Validation</h2>
+      <h2>我们如何在spring-mvc中使用Bean Validation</h2>
 	  <ul>
         <li>
           <strong>使用Bean Validation约束注解定义请求参数</strong>
@@ -496,7 +490,7 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
 
       <h2 class="slide" id="common-method-howUseMVPP">如何用MethodValidationPostProcessor开发呢？</h2>
 	  <p class="slide" id="common-method-howUseMVPP-dev">
-		<strong>@Validated && Bean Validation constraint annotation && ConstraintViolationException异常处理</strong>
+		<strong>xml配置 && @Validated修饰类 && Bean Validation约束注解修饰参数 && ConstraintViolationException异常处理</strong>
 	  </p>
     </section>
 	
@@ -519,23 +513,8 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
 	
 	<section class="slide" id="why-BeanValidation">
 	<h2>为什么使用Bean Validation</h2>
-	<h3>Why not?</h3>
-	<p>
-	<pre><code>
-{
-	"statusCode": 400,
-	"errorMsg": "姓名不能为空",
-	"data": null
-}
-	</pre></code>
-	</p>
-	
-<p>如果公司内所有的微服务，对于参数合法性校验都如上这么输出，联调是不是都觉得很舒服？</p>
-
-<p>如果公司内有这么一个公共jar包，所有的应用只需加一行配置，统一封装参数校验，是不是优雅很多？会省事很多？</p>
-
-<p class="slide" id="why-BeanValidation-suggest">使用Bean Validation最终的目的是为了统一规范，标准输出，如果你的项目里已经有了类似的标准规范，那就没必要硬来使用Bean Validation了</p>
-
+	<ol>官方slogan：Constrain once, validate everywhere</ol>
+	<ol class="slide" id="BeanValidation-standard" style="color:blue;"><strong>规范！！！</strong></ol>
 	</section>
 	
 	<section class="slide" id="question">
@@ -544,12 +523,12 @@ public class PastExtValidatorForDate implements ConstraintValidator<PastExt, Dat
       <ul>
         <li>
           <strong>如何自定义错误消息？</strong>
-		  <p>根据优先级，eg：spring MessageSouce</p>
+		  <p>ValidationMessages*.properties || ContributorValidationMessages*.properties</p>
         </li>
 
         <li>
           <strong>嵌套的对象为什么不做验证？</strong>
-		  <p>检查是否添加了注解：@Valid</p>
+		  <p>检查是否使用了注解：@Valid</p>
         </li>
 
         <li>
@@ -567,9 +546,9 @@ Validator validator = configure.buildValidatorFactory().getValidator();
 	<section class="slide" id="thanks">
 		<h2>Thanks</h2>
 		<ol>Q/A</ol>
-		<ol>如果您觉得还不错，有点兴趣，还请关注作者的微信公众号：</ol>
+		<ol>如果您觉得还不错，还请关注作者的微信公众号：</ol>
 		<img src="../../resources/images/qrcode_for_gh_738ac67a9223_344.jpg" alt="微信公众号">
-		<ol>微信扫描以上二维码，或者搜索微信公众号： 阅读的伟哥</ol>
+		<ol>微信扫描上方二维码，或者搜索并关注微信公众号： 阅读的伟哥</ol>
     </section>
 
     <!-- End slides. -->
