@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=1024, user-scalable=no">
 
-  <title>聊聊MQ</title>
+  <title>如何设计一款MQ</title>
 
   <!-- Required stylesheet -->
   <link rel="stylesheet" media="screen" href="../../deck.js/core/deck.core.css">
@@ -35,21 +35,14 @@
     <!-- Begin slides. Just make elements with a class of slide. -->
 
     <section class="slide" id="index">
-      <h2>聊聊MQ</h2>
-	  <h2>-----如何设计一款MQ？</h2>
-      <ol>
-		  <p>
-	Name : 王伟
-	<br>
-	Department : 理财技术部
-	<br>
-	Email: hzwangwei6@corp.netease.com
-		  </p>
-      </ol>
+      <h2>如何设计一款MQ</h2>
+      <ol>Name : 王伟</ol>
+	  <ol>Email : hzwangwei6@corp.netease.com</ol>
     </section>
 	
     <section class="slide" id="what-mq">
       <h2>MQ是什么？</h2>
+	  <ol>Message Queue 消息队列</ol>
     </section>
 	
     <section class="slide" id="how-mq-do">
@@ -57,23 +50,28 @@
 
       <ul>
         <li>
-          <strong>异步</strong>
+          <strong>解耦</strong>：
+		  系统间通过"消息"间接依赖
+        </li>
+
+        <li>
+          <strong>异步</strong>：
+		  MQ把一次RPC调用变2次RPC调用，让"处理"变"通知"
         </li>
 		
         <li>
-          <strong>解耦</strong>
+          <strong>削峰</strong>：
+		  消息堆积
         </li>
 		
         <li>
-          <strong>削峰</strong>
+          <strong>最终一致</strong>：
+		  业务依托MQ做最终一致
         </li>
 		
         <li>
-          <strong>最终一致</strong>
-        </li>
-		
-        <li>
-          <strong>广播</strong>
+          <strong>广播</strong>：
+		  一次"生产"，多方"订阅"
         </li>
       </ul>
     </section>
@@ -83,7 +81,7 @@
 
       <ul>
         <li>
-          <strong>Topic</strong>: 消息主题，表示一类消息
+          <strong>Topic</strong>: 消息主题，表示一类消息。
         </li>
 		
         <li>
@@ -112,9 +110,46 @@
       <img src="./images/DesignPefectMQ.png" alt="DesignPefectMQ">
 	  </p>
     </section>
+	
+    <section class="slide" id="mq-feature-list">
+      <h2>想象下：一个完整的MQ服务应该具备什么？</h2>
+
+      <ul>
+        <li>
+          <strong>MQ服务会有多个broker，可以根据策略做负载均衡</strong>
+        </li>
+
+        <li>
+          <strong>broker要保证高可用，挂了一台也会有其它的broker顶上，所以broker要有备份</strong>
+        </li>
+		
+        <li>
+          <strong>每个业务应该把消息分布到不同的broker(高可用)</strong>
+        </li>
+		
+        <li>
+          <strong>每个broker应该会有多个队列，每个队列应该会有一个写offset以便知晓生产进度</strong>
+        </li>
+		
+        <li>
+          <strong>需要维护topic与队列的关系，以及消费者与每个队列的消费进度</strong>
+        </li>
+
+        <li>
+          <strong>每个队列应该存放一类业务消息，队列应该是消息存储的最小单位</strong>
+        </li>
+
+        <li>
+          <strong>队列需要副本(高可用)</strong>
+        </li>
+      </ul>
+
+      <p class="slide" id="mq-feature-list-memo">下面将从底层开始介绍，如何从单个队列到多个队列，从单机到集群的逐步实现过程，由于时间有限，本篇仅以文件队列为基础展开介绍。</p>
+    </section>
 
 	<section class="slide" id="singleTopicSingleQueue-img">
       <h2>单队列实现发布订阅</h2>
+	  <p>单队列：一个topic对应一个Queue</p>
       <img src="./images/singleQueue.png" alt="singleTopicSingleQueue">
     </section>
 
@@ -123,7 +158,7 @@
 
       <ul>
         <li>
-          <strong>I/O</strong>: java文件NIO，MMap，顺序读、写
+          <strong>I/O</strong>: 顺序读写文件
         </li>
 
         <li>
@@ -132,11 +167,11 @@
         </li>
 		
         <li>
-          <strong>Topic关系维护</strong>: Topic与Queue的关系
+          <strong>Topic关系维护</strong>: Topic与Queue的关系、Queue的写offset
         </li>
 		
         <li>
-          <strong>消费关系维护</strong>: Consumer、Topic、Queue、offset
+          <strong>消费关系维护</strong>: Consumer、Topic、Queue、读offset
         </li>
 		
         <li>
@@ -152,54 +187,76 @@
         </li>
       </ul>
 
-      <p class="slide" id="singleTopicSingleQueue-remark-memo">相当于实现一个文件队列，这块东西可以单独抽出来作为java.util.Queue的实现类使用，适合那些担心应用重启会丢消息的场景，比方说：异步请求的失败重试</p>
+      <p class="slide" id="singleTopicSingleQueue-remark-memo">这块东西可以单独抽出来作为java.util.Queue的实现类使用，适合那些担心应用重启会丢消息的场景，比方说：异步请求的失败重试</p>
     </section>
 
 	<section class="slide" id="singleTopicSingleQueue-img2">
       <h2>单队列实现发布订阅</h2>
       <img src="./images/singleQueue.png" alt="singleTopicSingleQueue">
-	  <h2>单机情况下如何演进？</h2>
+	  <h2>单机情况下如何优化演进？</h2>
+    </section>
+	
+    <section class="slide" id="singleTopicMultiQueue-remark">
+      <h2>多队列模型</h2>
+	  <p>单队列是一个topic对应一个Queue，演进后一个topic则有多个Queue</p>
+	  <h3 class="slide" id="singleTopicMultiQueue-remark-optimize">这样做的好处呢？</h3>
+      <ul class="slide" id="singleTopicMultiQueue-remark-optimize-list">
+        <li>
+          <strong>负载均衡</strong>: 多个队列，分摊生产、消费请求
+        </li>
+		
+        <li>
+          <strong>安全性</strong>: 数据分区存放，有一定的保护作用
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide" id="consumeMode">
+      <h2>消费模型</h2>
+	  <ul>
+        <li>
+          <strong>集群消费</strong>: 一个Consumer Group中的Consumer实例平均分摊消费消息。例如某个Topic有9条消息，其中一个Consumer Group有3个实例（可能是3个进程，或者3台机器），那么每个实例只消费其中的3条消息。
+        </li>
+		
+        <li>
+          <strong>广播消费</strong>: 一条消息被多个Consumer消费，即使这些Consumer属于同一个Consumer Group，消息也会被Consumer Group中的每个Consumer都消费一次，广播消费中的Consumer Group概念可以认为在消息划分方面无意义。
+        </li>
+      </ul>
     </section>
 
 	<section class="slide" id="singleTopicMultiQueue-clusterConsuming-img">
-      <h2>队列分区</h2>
+      <h2>多队列-集群消费模型</h2>
       <img src="./images/patition-clusterConsuming.png" alt="singleTopicMultiQueue-clusterConsuming">
     </section>
 	
     <section class="slide" id="singleTopicMultiQueue-clusterConsuming-remark">
-      <h2>队列分区-集群消费</h2>
-	  <p>集群消费：一个Consumer Group中的Consumer实例平均分摊消费消息。例如某个Topic有9条消息，其中一个Consumer Group有3个实例（可能是3个进程，或者3台机器），那么每个实例只消费其中的3条消息。</p>
-      <ul>
+      <h2>多队列-集群消费模型</h2>
+      <ul>		
         <li>
-          <strong>Topic关系维护</strong>: Topic与分区的关系
+          <strong>Topic关系维护</strong>: Topic与Queue的关系、每个Queue的写offset
         </li>
 
         <li>
-          <strong>消费关系维护</strong>: consumer group对每个Queue的消费进度
+          <strong>消费关系维护</strong>: Consumer group对每个Queue的消费进度（其下每个Consumer需要共享消费进度，所以消费进度需要统一管理）
         </li>
 		
         <li>
           <strong>负载均衡</strong>: Producer轮询写，Consumer平均消费
         </li>
-		
-        <li>
-          <strong>消息的读写</strong>: 代理到单个队列的读写
-        </li>
       </ul>
     </section>
 	
 	<section class="slide" id="singleTopicMultiQueue-broadcastConsuming-img">
-      <h2>队列分区-广播消费</h2>
-	  <p>广播消费：一条消息被多个Consumer消费，即使这些Consumer属于同一个Consumer Group，消息也会被Consumer Group中的每个Consumer都消费一次，广播消费中的Consumer Group概念可以认为在消息划分方面无意义。</p>
+      <h2>多队列-广播消费模型</h2>
       <img src="./images/patition-broadcastConsuming.png" alt="singleTopicMultiQueue-broadcastConsuming">
     </section>
 	
     <section class="slide" id="singleTopicMultiQueue-broadcastConsuming-remark">
-      <h2>队列分区-广播消费</h2>
+      <h2>多队列-广播消费模型</h2>
 	  <p>与集群消费不同的点：</p>
       <ul>
         <li>
-          <strong>消费关系维护</strong>: consumer对每个queue的消费进度
+          <strong>消费关系维护</strong>: Consumer对每个Queue的消费进度（消费进度存放在消费端本地即可）
         </li>
 		
         <li>
@@ -238,42 +295,40 @@
           <strong>设计上优化</strong>: <p class="slide" id="cluster-optimize-other-design-non">想不出来？</p>
         </li>
       </ul>
-	  <h2 class="slide" id="single-to-cluster">如何摆脱单点迈向集群？</h2>
+	  <h2 class="slide" id="single-to-cluster">如何从单机迈向集群？</h2>
     </section>
 	
 	<section class="slide" id="cluster-role">
       <h2>MQ集群角色</h2>
 	  
       <ul>
-        <li class="slide" id="cluster-role-broker">
+        <li>
           <strong>Broker</strong>: 存储消息，转发消息，server
         </li>
 		
-        <li class="slide" id="cluster-role-regcenter">
+        <li>
           <strong>注册中心</strong>: 服务发现，Topic关系维护，消费关系维护，offset维护
         </li>
 		
-        <li class="slide" id="cluster-role-producer">
+        <li>
           <strong>Producer</strong>: 消息生产者，生产消息
         </li>
 		
-        <li class="slide" id="cluster-role-consumer">
+        <li>
           <strong>Consumer</strong>: 消息消费者，消费消息
         </li>
-		
-        <li class="slide" id="cluster-role-relation">
-          <strong>关系图</strong>: <img src="./images/cluster-role-relation.png" alt="clusterRoleRelation">
-        </li>
       </ul>
+
+      <img src="./images/cluster-role-relation.png" alt="clusterRoleRelation" class="slide" id="cluster-role-relation">
     </section>
 
 	<section class="slide" id="clusterTopicMultiQueue-img">
-      <h2>集群发布/订阅</h2>
+      <h2>MQ集群模型</h2>
       <img src="./images/clusterMQ-pc.png" alt="clusterTopicMultiQueue">
     </section>
 	
     <section class="slide" id="clusterTopicMultiQueue-remark">
-      <h2>集群发布/订阅</h2>
+      <h2>MQ集群模型</h2>
 
       <ul>
         <li>
@@ -306,12 +361,12 @@
     </section>
 	
 	<section class="slide" id="MQ-HA-img">
-      <h2>MQ高可用</h2>
+      <h2>MQ高可用模型</h2>
       <img src="./images/MQ-HA-pc.png" alt="MQ-HA-Producer-Consumer">
     </section>
 	
     <section class="slide" id="MQ-HA-remark">
-      <h2>MQ高可用</h2>
+      <h2>MQ高可用模型</h2>
 
       <ul>
         <li>
@@ -532,6 +587,9 @@
 	<section class="slide" id="thanks">
 		<h2>Thanks</h2>
 		<ol>Q/A</ol>
+		<ol>如果您觉得还不错，还请关注微信公众号：</ol>
+		<img src="../../resources/images/qrcode_for_gh_0630ba0d9494_344.jpg" alt="微信公众号">
+		<ol>微信扫描上方二维码，或者搜索并关注微信公众号： 众山神</ol>
     </section>
 
     <!-- End slides. -->
