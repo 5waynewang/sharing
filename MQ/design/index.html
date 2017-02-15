@@ -35,8 +35,9 @@
     <!-- Begin slides. Just make elements with a class of slide. -->
 
     <section class="slide" id="index">
-      <h2>如何设计一款MQ</h2>
+      <h2>如何设计一款MQ？</h2>
       <ol>Name : 王伟</ol>
+      <ol>Department : 智能金融</ol>
 	  <ol>Email : hzwangwei6@corp.netease.com</ol>
     </section>
 	
@@ -51,7 +52,7 @@
       <ul>
         <li>
           <strong>解耦</strong>：
-		  系统间通过"消息"间接依赖
+		  面向"消息"的编程
         </li>
 
         <li>
@@ -78,6 +79,8 @@
 	
     <section class="slide" id="mq-word">
       <h2>MQ的一些术语</h2>
+	  
+      <img src="./images/simple-mq-relation.png" alt="SimpleMQRelation">
 
       <ul>
         <li>
@@ -100,8 +103,6 @@
           <strong>Broker</strong>: 消息中转角色，负责存储消息，转发消息，一般也称为Server。
         </li>
       </ul>
-	  
-      <img src="./images/simple-mq-relation.png" alt="SimpleMQRelation">
     </section>
 	
     <section class="slide" id="how-design-pefect-ms">
@@ -124,23 +125,23 @@
         </li>
 		
         <li>
-          <strong>每个业务应该把消息分布到不同的broker(高可用)</strong>
+          <strong>同一类(Topic)消息分布到不同的broker、不同的队列</strong>
         </li>
 		
         <li>
-          <strong>每个broker应该会有多个队列，每个队列应该会有一个写offset以便知晓生产进度</strong>
+          <strong>需要维护每个队列的生产进度、消费者与每个队列的消费进度</strong>
         </li>
 		
         <li>
-          <strong>需要维护topic与队列的关系，以及消费者与每个队列的消费进度</strong>
+          <strong>保证消息的可靠性，需要有方案不会丢消息</strong>
         </li>
 
         <li>
-          <strong>每个队列应该存放一类业务消息，队列应该是消息存储的最小单位</strong>
+          <strong>消息的堆积方案</strong>
         </li>
 
         <li>
-          <strong>队列需要副本(高可用)</strong>
+          <strong>... ...</strong>
         </li>
       </ul>
 
@@ -162,6 +163,10 @@
         </li>
 
         <li>
+          <strong>消息存储</strong>: 同步、异步、定期、定量
+        </li>
+
+        <li>
           <strong>消息结构</strong>: offset定义
 		  <img src="./images/message-design.png" alt="message-design">
         </li>
@@ -176,10 +181,6 @@
 		
         <li>
           <strong>消费模型</strong>: pull/push
-        </li>
-
-        <li>
-          <strong>消息存储</strong>: 同步、异步、定期、定量
         </li>
 
         <li>
@@ -295,7 +296,7 @@
           <strong>设计上优化</strong>: <p class="slide" id="cluster-optimize-other-design-non">想不出来？</p>
         </li>
       </ul>
-	  <h2 class="slide" id="single-to-cluster">如何从单机迈向集群？</h2>
+	  <h2 class="slide" id="single-to-cluster">如何从单机到集群？</h2>
     </section>
 	
 	<section class="slide" id="cluster-role">
@@ -332,7 +333,7 @@
 
       <ul>
         <li>
-          <strong>RPC通信</strong>: NIO、协议
+          <strong>RPC通信</strong>: NIO TCP、协议
         </li>
 
         <li>
@@ -346,14 +347,13 @@
 		<li>
           <strong>消费关系</strong>: Consumer、Topic、Queue、offset
 		  <br>
+		  1. Broker维护消费进度
 		  <br>
-		  Broker维护消费进度：可靠性
-		  <br>
-		  Consumer维护消费进度：吞吐量
+		  2. Consumer维护消费进度
         </li>
 		
         <li>
-          <strong>消费模型pull/push</strong>: 双重保证，消费pull通知push
+          <strong>消费模型pull/push</strong>: 双重保证，通知push、消费pull
         </li>
       </ul>
 	  
@@ -589,7 +589,7 @@
 		<ol>Q/A</ol>
 		<ol>如果您觉得还不错，还请关注微信公众号：</ol>
 		<img src="../../resources/images/qrcode_for_gh_0630ba0d9494_344.jpg" alt="微信公众号">
-		<ol>微信扫描上方二维码，或者搜索并关注微信公众号： 众山神</ol>
+		<ol>微信扫描上方二维码，或者搜索并关注微信公众号： 以山之名</ol>
     </section>
 
     <!-- End slides. -->
