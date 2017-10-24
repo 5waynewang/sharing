@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  <title>白话设计模式(一)：创建型设计模式</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/style/web-2.0.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="../../deck.js/core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="../../deck.js/modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+
+    <section class="slide" id="index">
+      <h2>白话设计模式(一)：创建型设计模式</h2>
+      <ol>Name : 王伟</ol>
+	  <ol>Department : 智能金融部</ol>
+	  <ol>Email : hzwangwei6@corp.netease.com</ol>
+	  <ol>当前ppt关联的<a href="https://my.oschina.net/u/3211616/blog/821343"/>博客地址</a></ol>
+    </section>
+	
+    <section class="slide" id="creational-dm-list">
+      <h2>创建型设计模式</h2>
+	  
+      <ul>
+        <li>
+          <strong>工厂模式</strong>：Factory
+        </li>
+
+        <li>
+          <strong>原型模式</strong>：Prototype
+        </li>
+		
+        <li>
+          <strong>建造模式</strong>：Builder
+        </li>
+		
+        <li>
+          <strong>单例模式</strong>：Singleton
+        </li>
+      </ul>
+    </section>
+
+	<section class="slide" id="AllFactoryPattern">
+      <h2>工厂模式</h2>
+	  <p>工厂模式分离了对象的构造与使用，使用者与目标对象的强依赖关系转变成了松耦合。</p>
+	  <h3 class="slide" id="AllFactoryPattern-merit" style="color:blue;">工厂模式的特点：</h3>
+      <ul>
+		<li class="slide" id="AllFactoryPattern-merit-Dependency">
+          <strong>松耦合，构造对象有了扩展性</strong>
+        </li>
+		
+        <li class="slide" id="AllFactoryPattern-merit-RepeatedCode">
+          <strong>工厂模式让使用者创建对象的过程更加精简、优雅</strong>
+        </li>
+		
+        <li class="slide" id="AllFactoryPattern-merit-ConstructorCenter">
+          <strong>对象的创建可以集中管理</strong>：对象可以重复利用、可以被监控等
+        </li>
+      </ul>
+
+	  <h3 class="slide" id="AllFactoryPattern-defect" style="color:blue;">工厂模式带来的问题：</h3>
+	  
+      <ul>
+		<li class="slide" id="AllFactoryPattern-defect-MultiClass">
+          <strong>类的数量增多了，在一定程度上增加了系统的复杂度</strong>
+        </li>
+		
+		<li class="slide" id="AllFactoryPattern-defect-diference">
+          <strong>工厂模式分为三类：简单工厂、工厂方法、抽象工厂</strong>：缺点不尽相同
+        </li>
+      </ul>
+    </section>
+
+	<section class="slide" id="SimpleFactory">
+      <h2>"简单工厂"</h2>
+	  <p>又称静态工厂方法(Static Factory Method)模式</p>
+      <pre><code>
+// 摘自 jdk1.7：java.lang.Integer
+    public static Integer valueOf(int i) {
+        assert IntegerCache.high &gt;= 127;
+        if (i &gt;= IntegerCache.low && i &lt;= IntegerCache.high)
+            return IntegerCache.cache[i + (-IntegerCache.low)];
+        return new Integer(i);
+    }
+	  </code></pre>
+	  
+<p></p>
+
+    </section>
+
+	<section class="slide" id="SimpleFactory-commons-collections">
+      <h2>"简单工厂"-示例2</h2>
+      <pre><code>
+// 摘自 commons-collections：org.apache.commons.collections.CollectionUtils
+    public static int size(Object object) {
+        int total = 0;
+        if (object instanceof Map) {
+            total = ((Map) object).size();
+        } else if (object instanceof Collection) {
+            total = ((Collection) object).size();
+        } else if (object instanceof Object[]) {
+            total = ((Object[]) object).length;
+        } else if (object instanceof Iterator) {
+            Iterator it = (Iterator) object;
+            while (it.hasNext()) {
+                total++;
+                it.next();
+            }
+        } else if (object instanceof Enumeration) {
+            Enumeration it = (Enumeration) object;
+            while (it.hasMoreElements()) {
+                total++;
+                it.nextElement();
+            }
+        } else if (object == null) {
+            throw new IllegalArgumentException("Unsupported object type: null");
+        } else {
+            try {
+                total = Array.getLength(object);
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalArgumentException("Unsupported object type: " + object.getClass().getName());
+            }
+        }
+        return total;
+    }
+	  </code></pre>
+	  
+<p></p>
+
+    </section>
+
+	<section class="slide" id="SimpleFactory-feature">
+      <h2>"简单工厂"的特点</h2>
+      <ul>
+        <li class="slide" id="SimpleFactory-feature-staticMethod">
+          <strong>静态方法</strong>：
+        </li>
+		
+        <li class="slide" id="SimpleFactory-feature-explicitType">
+          <strong>根据入参明确"产品"类型</strong>：
+        </li>
+		
+        <li class="slide" id="SimpleFactory-feature-addProduct">
+          <strong>增加新的"产品"需要修改工厂类的判断逻辑代码</strong>：
+        </li>
+		
+        <li class="slide" id="SimpleFactory-feature-MultiProduct">
+          <strong>"产品"数量影响工厂方法的复杂度</strong>：
+        </li>
+      </ul>
+
+	  <h4 class="slide" id="SimpleFactory-whatTheUseScene" style="color:blue;">哪些场景适合使用"简单工厂"模式？</h4>
+    </section>
+
+	<section class="slide" id="SimpleFactory-useScene">
+      <h2>"简单工厂"使用场景</h2>
+	  <p>工厂类负责创建的对象比较少；客户端只知道传入工厂类的参数，不关心创建对象的过程。</p>
+      <ul>
+        <li class="slide" id="SimpleFactory-useScene-util">
+          <strong>工具类封装，简化创建过程</strong>：newDate() 、 newTimestamp()返回当前日期
+        </li>
+		
+        <li class="slide" id="SimpleFactory-useScene-ConstructorCenter">
+          <strong>对象的创建需要集中化管理</strong>：线程、连接的重复利用
+        </li>
+		
+        <li class="slide" id="SimpleFactory-useScene-AbstractConstructor">
+          <strong>与目标对象松耦合</strong>：例如我们提供统一的缓存标准，实现方式有redis、memcached，通过配置使用不同的实现类
+        </li>
+      </ul>
+	  
+	  <h3 class="slide" id="SimpleFactory-useScene-jdk">jdk中的"简单工厂"：</h3>
+
+      <ul class="slide" id="SimpleFactory-useScene-jdk-list">
+        <li>
+          <strong>java.lang.Integer#valueOf</strong>
+        </li>
+        <li>
+          <strong>java.lang.Class#newInstance</strong>
+        </li>
+        <li>
+          <strong>java.lang.reflect.Constructor#newInstance</strong>
+        </li>
+        <li>
+          <strong>java.text.DateFormat#getInstance</strong>
+        </li>
+      </ul>
+    </section>
+
+	<section class="slide" id="SimpleFactory-defect">
+      <h2>"简单工厂"的缺点</h2>
+	  <p class="slide" id="SimpleFactory-defect-memo">上篇说到过："产品"数量影响工厂方法的复杂度</p>
+	  <p class="slide" id="SimpleFactory-defect-howUpgrade">如何解决？</p>
+	  <p class="slide" id="SimpleFactory-defect-howUpgrade2" style="color:blue;">eg：系统架构中，单机访问遇到瓶颈，如何处理？</p>
+	  <p class="slide" id="SimpleFactory-defect-patition"><strong>分区</strong></p>
+	  <img src="./images/SimpleFactory-patition.png" alt="SimpleFactoryPatition" class="slide" id="SimpleFactory-defect-patition-design">
+    </section>
+
+	<section class="slide" id="FactoryMethod">
+      <h2>"工厂方法"的特点</h2>
+	  <p>四种角色：抽象产品、具体产品、抽象工厂、具体工厂</p>
+      <ul>
+        <li class="slide" id="FactoryMethod-feature-hierarchy">
+          <strong>工厂类有继承关系</strong>：
+        </li>
+		
+        <li class="slide" id="FactoryMethod-feature-addProduct">
+          <strong>增加新的"产品"需要增加工厂类</strong>：符合开闭原则，"产品"数量成倍增长
+        </li>
+		
+        <li class="slide" id="FactoryMethod-feature-FactoryCreateProduct">
+          <strong>具体工厂生产具体"产品"</strong>：无法增加新的"产品类"，eg：能让LoggerFactory拥有BeanFactory的功能？
+        </li>
+		
+        <li class="slide" id="FactoryMethod-feature-MultiProduct">
+          <strong>工厂模式的退化</strong>：具体工厂生产具体"产品"
+        </li>
+      </ul>
+	  
+	  <p class="slide" id="FactoryMethod-diferenceWithSimpleFactory">"工厂方法"解决了"简单工厂""产品"数量多的问题，出现新的问题：无法增加新的"产品类"，"产品"数量成倍增长</p>
+
+	  <h4 class="slide" id="FactoryMethod-whatTheUseScene" style="color:blue;">哪些场景适合使用"工厂方法"模式？</h4>
+    </section>
+
+	<section class="slide" id="FactoryMethod-useScene">
+      <h2>"工厂方法"使用场景</h2>
+      <ul>
+        <li class="slide" id="FactoryMethod-useScene-isolation">
+          <strong>需要保证具体"产品"的隔离性</strong>：获取配置信息：json/xml/ini/yaml，封装成不同的package
+        </li>
+		
+		
+      </ul>
+	  
+	  <h3 class="slide" id="FactoryMethod-useScene-jdk">jdk中的"工厂方法"：</h3>
+
+      <ul class="slide" id="FactoryMethod-useScene-jdk-list">
+        <li>
+          <strong>java.lang.Integer#valueOf</strong>
+        </li>
+        <li>
+          <strong>java.lang.Class#newInstance</strong>
+        </li>
+        <li>
+          <strong>java.lang.reflect.Constructor#newInstance</strong>
+        </li>
+        <li>
+          <strong>java.text.DateFormat#getInstance</strong>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="AbstractFactory">
+      <h2>"抽象工厂"</h2>
+      <pre><code>
+
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="AbstractFactory-useScene">
+      <h2>"抽象工厂"使用场景</h2>
+	  
+	  <h4 class="slide" id="AbstractFactory-useScene-jdk">jdk中的"抽象工厂"：</h4>
+
+      <ul class="slide" id="AbstractFactory-useScene-jdk-list">
+        <li>
+          <strong>java.util.Calendar#getInstance</strong>
+        </li>
+        <li>
+          <strong>java.text.NumberFormat#getInstance</strong>
+        </li>
+        <li>
+          <strong>java.sql.Connection</strong>：Statement、PreparedStatement、CallableStatement
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="AllFactoryPattern-compare">
+      <h2>三种"工厂"模式对比</h2>
+	</section>
+	
+	<section class="slide" id="Prototype">
+      <h2>"原型模式"</h2>
+	  <p>通过"复制"一个已经存在的实例来返回新的实例</p>
+      <pre><code>
+UserVO convertDO2VO(UserDO userDO) {
+	UserVO userVO = new UserVO();
+	userVO.setName(userDO.getName());
+	userVO.setAge(userDO.getAge());
+	userVO.setBirthday(DateFormatUtils.format(userDO.getBirthday(), "yyyy-MM-dd"));
+	// ... ...
+	return userVO;
+}
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="Prototype-useScene">
+      <h2>"原型模式"使用场景</h2>
+	  <p>
+	  java.lang.Object#clone
+	  <br>
+	  java.lang.Cloneable
+	  </p>
+
+      <ul>
+        <li class="slide" id="Prototype-useScene-Clone">
+          <strong>创建值相等，但不同用途的"同类"对象</strong>
+		  <p>
+		  DO-&gt;VO
+		  <br>
+		  对象在操作过程中值发生变化，不适用于下次操作
+		  </p>
+        </li>
+		
+        <li class="slide" id="Prototype-useScene-ComplexConstructor">
+          <strong>创建复杂或者耗时的实例</strong>
+		  <p>
+		  eg：httpclient 4.4+
+		  <br>
+		  org.apache.http.client.config.RequestConfig#copy(RequestConfig)
+		  <br>
+		  克隆配置 && 减少参数校验
+		  </p>
+        </li>
+      </ul>
+
+	  <h4 class="slide" id="Prototype-useScene-DiferenceClone" style="color:blue;">浅克隆和深克隆的区别？</h4>
+    </section>
+
+	<section class="slide" id="Builder">
+      <h2>"建造模式"</h2>
+	  <p>类A的实例化交由类B</p>
+      <pre><code>
+public class Maps {
+	public static Map newMap() {
+		return new HashMap();
+	}
+}
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="Builder-useScene">
+      <h2>"建造模式"使用场景</h2>
+
+      <ul>
+        <li class="slide" id="Builder-useScene-private">
+          <strong>私有化对象构造，不透明</strong>
+		  <p>
+		  
+		  </p>
+        </li>
+		
+        <li class="slide" id="Builder-useScene-validateCenter">
+          <strong>统一构造、校验</strong>
+		  <p>
+		  
+		  </p>
+        </li>
+      </ul>
+
+      <h4 class="slide" id="Builder-useScene-jdk">jdk中的"建造模式"：</h4>
+
+      <ul class="slide" id="Builder-useScene-jdk-list">
+        <li>
+          <strong>java.lang.StringBuilder</strong>
+        </li>
+        <li>
+          <strong>java.sql.PreparedStatement</strong>
+        </li>
+        <li>
+          <strong>java.nio.ByteBuffer</strong>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="Singleton">
+      <h2>"单例模式"</h2>
+	  <p>类A的实例化交由类B</p>
+      <pre><code>
+public class Maps {
+	public static Map newMap() {
+		return new HashMap();
+	}
+}
+	  </code></pre>
+    </section>
+
+	<section class="slide" id="Singleton-useScene">
+      <h2>"单例模式"使用场景</h2>
+
+      <ul>
+        <li class="slide" id="Singleton-useScene-onlyOne">
+          <strong>只有或者只能一个对象</strong>
+		  <p>
+		  ID生成器/
+		  </p>
+        </li>
+
+        <li class="slide" id="Singleton-useScene-highLoad">
+          <strong>一个对象实例会消耗比较多的资源</strong>
+		  <p>
+		  配置中心的client，无需创建多个Connection
+		  </p>
+        </li>
+      </ul>
+
+      <h4 class="slide" id="Singleton-useScene-jdk">jdk中的"单例模式"应用示例：</h4>
+
+      <ul class="slide" id="Singleton-useScene-jdk-list">
+        <li>
+          <strong>java.lang.Runtime#getRuntime</strong>
+        </li>
+      </ul>
+
+	  <h4 class="slide" id="Singleton-useScene-howDefine" style="color:blue;">如何用"懒汉方式"和"饿汉方式"分别写一个单例？</h4>
+    </section>
+	
+	<section class="slide" id="question">
+      <h2>常见问题</h2>
+	  
+      <ul>
+        <li>
+          <strong>是否一定要用设计模式？</strong>
+		  <p>no！！！让代码易维护、易扩展的模式就是最好的模式！</p>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="thanks">
+		<h2>Thanks</h2>
+		<ol>Q/A</ol>
+		<ol>如果您觉得还不错，还请关注微信公众号：</ol>
+		<img src="../../resources/images/qrcode_for_gh_0630ba0d9494_344.jpg" alt="微信公众号">
+		<ol>微信扫描上方二维码，或者搜索并关注微信公众号： 众山神</ol>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="../../deck.js/jquery.min.js"></script>
+<script src="../../deck.js/core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="../../deck.js/extensions/menu/deck.menu.js"></script>
+<script src="../../deck.js/extensions/goto/deck.goto.js"></script>
+<script src="../../deck.js/extensions/status/deck.status.js"></script>
+<script src="../../deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="../../deck.js/extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+</body>
+</html>
