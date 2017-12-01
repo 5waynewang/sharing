@@ -5,29 +5,29 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=1024, user-scalable=no">
 
-  <title>如何设计一款MQ</title>
+  <title>MQ设计剖析</title>
 
   <!-- Required stylesheet -->
-  <link rel="stylesheet" media="screen" href="../../deck.js/core/deck.core.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/core/deck.core.css">
 
   <!-- Extension CSS files go here. Remove or add as needed. -->
-  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/goto/deck.goto.css">
-  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/menu/deck.menu.css">
-  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/navigation/deck.navigation.css">
-  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/status/deck.status.css">
-  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/scale/deck.scale.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/scale/deck.scale.css">
 
   <!-- Style theme. More available in /themes/style/ or create your own. -->
-  <link rel="stylesheet" media="screen" href="../../deck.js/themes/style/web-2.0.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/themes/style/web-2.0.css">
 
   <!-- Transition theme. More available in /themes/transition/ or create your own. -->
-  <link rel="stylesheet" media="screen" href="../../deck.js/themes/transition/horizontal-slide.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/themes/transition/horizontal-slide.css">
 
   <!-- Basic black and white print styles -->
-  <link rel="stylesheet" media="print" href="../../deck.js/core/print.css">
+  <link rel="stylesheet" media="print" href="http://github.aifaq.me/sharing/deck.js/core/print.css">
 
   <!-- Required Modernizr file -->
-  <script src="../../deck.js/modernizr.custom.js"></script>
+  <script src="http://github.aifaq.me/sharing/deck.js/modernizr.custom.js"></script>
 </head>
 <body>
   <div class="deck-container">
@@ -35,10 +35,9 @@
     <!-- Begin slides. Just make elements with a class of slide. -->
 
     <section class="slide" id="index">
-      <h2>如何设计一款MQ？</h2>
-      <ol>Name : 王伟</ol>
-      <ol>Name : 王伟</ol>
-	    <ol>Email : hzwangwei6@corp.netease.com</ol>
+      <h2>MQ设计剖析</h2>
+      <ol>姓名 : 王伟</ol>
+      <ol>邮箱 : hzwangwei6@corp.netease.com</ol>
     </section>
 	
     <section class="slide" id="what-mq">
@@ -80,7 +79,7 @@
     <section class="slide" id="mq-word">
       <h2>MQ的一些术语</h2>
 	  
-      <img src="./images/simple-mq-relation.png" alt="SimpleMQRelation">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/simple-mq-relation.png" alt="SimpleMQRelation">
 
       <ul>
         <li>
@@ -108,7 +107,7 @@
     <section class="slide" id="how-design-pefect-ms">
       <h2>想象下：一个完整的MQ服务应该具备什么？</h2>
 	  <p class="slide" id="DesignPefectMQ-img">
-      <img src="./images/DesignPefectMQ.png" alt="DesignPefectMQ">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/DesignPefectMQ.png" alt="DesignPefectMQ">
 	  </p>
     </section>
 	
@@ -145,13 +144,13 @@
         </li>
       </ul>
 
-      <p class="slide" id="mq-feature-list-memo">下面将从底层开始介绍，如何从单个队列到多个队列，从单机到集群的逐步实现过程，由于时间有限，本篇仅以文件队列为基础展开介绍。</p>
+      <p class="slide" id="mq-feature-list-memo">以下将由下往上展开介绍，从单个队列到多个队列，从单机到集群的逐步实现过程，由于时间有限，本篇仅以文件队列为基础展开介绍。</p>
     </section>
 
 	<section class="slide" id="singleTopicSingleQueue-img">
       <h2>单队列实现发布订阅</h2>
 	  <p>单队列：一个topic对应一个Queue</p>
-      <img src="./images/singleQueue.png" alt="singleTopicSingleQueue">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/singleQueue.png" alt="singleTopicSingleQueue">
     </section>
 
     <section class="slide" id="singleTopicSingleQueue-remark">
@@ -168,11 +167,11 @@
 
         <li>
           <strong>消息结构</strong>: offset定义
-		  <img src="./images/message-design.png" alt="message-design">
+		  <img src="http://github.aifaq.me/sharing/MQ/design/images/message-design.png" alt="message-design">
         </li>
 		
         <li>
-          <strong>Topic关系维护</strong>: Topic与Queue的关系、Queue的写offset
+          <strong>生产关系维护</strong>: Topic、Queue、写offset
         </li>
 		
         <li>
@@ -193,7 +192,7 @@
 
 	<section class="slide" id="singleTopicSingleQueue-img2">
       <h2>单队列实现发布订阅</h2>
-      <img src="./images/singleQueue.png" alt="singleTopicSingleQueue">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/singleQueue.png" alt="singleTopicSingleQueue">
 	  <h2>单机情况下如何优化演进？</h2>
     </section>
 	
@@ -227,14 +226,14 @@
 
 	<section class="slide" id="singleTopicMultiQueue-clusterConsuming-img">
       <h2>多队列-集群消费模型</h2>
-      <img src="./images/patition-clusterConsuming.png" alt="singleTopicMultiQueue-clusterConsuming">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/patition-clusterConsuming.png" alt="singleTopicMultiQueue-clusterConsuming">
     </section>
 	
     <section class="slide" id="singleTopicMultiQueue-clusterConsuming-remark">
       <h2>多队列-集群消费模型</h2>
       <ul>		
         <li>
-          <strong>Topic关系维护</strong>: Topic与Queue的关系、每个Queue的写offset
+          <strong>生产关系维护</strong>: Topic、Queue、写offset
         </li>
 
         <li>
@@ -249,7 +248,7 @@
 	
 	<section class="slide" id="singleTopicMultiQueue-broadcastConsuming-img">
       <h2>多队列-广播消费模型</h2>
-      <img src="./images/patition-broadcastConsuming.png" alt="singleTopicMultiQueue-broadcastConsuming">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/patition-broadcastConsuming.png" alt="singleTopicMultiQueue-broadcastConsuming">
     </section>
 	
     <section class="slide" id="singleTopicMultiQueue-broadcastConsuming-remark">
@@ -272,7 +271,7 @@
       <h2>kafka分区数过多的问题</h2>
 	  <p class="slide" id="kafka-many-patition">顺序读、写变随机读、写</p>
 	  <p class="slide" id="RocketMQ-offset">RocketMQ解决方案：
-      <img src="./images/RocketMQ-offset.png" alt="RocketMQOffset"></p>
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/RocketMQ-offset.png" alt="RocketMQOffset"></p>
 	  <p class="slide" id="RocketMQ-many-patition">问题：顺序读变随机读(同一topic消息在commit log中不是连续的)，会影响消费的吞吐量吗？</p>
     </section>
 	
@@ -320,12 +319,12 @@
         </li>
       </ul>
 
-      <img src="./images/cluster-role-relation.png" alt="clusterRoleRelation" class="slide" id="cluster-role-relation">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/cluster-role-relation.png" alt="clusterRoleRelation" class="slide" id="cluster-role-relation">
     </section>
 
 	<section class="slide" id="clusterTopicMultiQueue-img">
       <h2>MQ集群模型</h2>
-      <img src="./images/clusterMQ-pc.png" alt="clusterTopicMultiQueue">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/clusterMQ-pc.png" alt="clusterTopicMultiQueue">
     </section>
 	
     <section class="slide" id="clusterTopicMultiQueue-remark">
@@ -362,7 +361,7 @@
 	
 	<section class="slide" id="MQ-HA-img">
       <h2>MQ高可用模型</h2>
-      <img src="./images/MQ-HA-pc.png" alt="MQ-HA-Producer-Consumer">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/MQ-HA-pc.png" alt="MQ-HA-Producer-Consumer">
     </section>
 	
     <section class="slide" id="MQ-HA-remark">
@@ -385,7 +384,7 @@
 	
 	<section class="slide" id="just-MQ-img">
       <h2>MQ仅仅如此？</h2>
-      <img src="./images/think.jpg" alt="just-MQ">
+      <img src="http://github.aifaq.me/sharing/MQ/design/images/think.jpg" alt="just-MQ">
     </section>
 	
 	<section class="slide" id="MQ-features">
@@ -425,7 +424,7 @@
       <ul>
         <li>
           <strong>最多一次（At most Once ）</strong>: 
-		  <img src="./images/At-most-Once.png" alt="At-most-Once">
+		  <img src="http://github.aifaq.me/sharing/MQ/design/images/At-most-Once.png" alt="At-most-Once">
 		  <p class="slide" id="At-most-Once-remark">消息可能会丢，但绝不会重复传输</p>
         </li>
 
@@ -447,32 +446,45 @@
 	  <h2 class="slide" id="how-design-message-ack">如何设计可靠的确认机制？</h2>
       <ul>
         <li class="slide" id="message-ack-athread-sync">
-          <strong>单线程同步ack</strong>: 同步更新offset
-		  <p>
-		  这里的单线程是指单线程消费同一队列/分区
-		  <br>
-		  1.单条消息消费
-		  <br>
-		  2.多条消息顺序消费
-		  </p>
+          <strong>单线程消费同步ack</strong>: 一个队列仅被一个线程消费
+    		  <p>
+    		  1.顺序消费
+    		  <br>
+    		  eg: kafka同步ack
+    		  </p>
         </li>
 		
         <li class="slide" id="message-ack-athread-async">
-          <strong>单线程异步ack</strong>: 适合pull模型
-		  <p>
-		  1.pull带上offset
-		  <br>
-		  2.Consumer异步维护offset(ack)
-		  </p>
+          <strong>单线程消费异步ack</strong>: 适合pull模型
+    		  <p>
+    		  1.pull带上offset
+    		  <br>
+    		  2.Consumer异步维护offset
+          <br>
+          eg: kafka异步ack
+    		  </p>
         </li>
 
         <li class="slide" id="message-ack-multithread-sync">
-          <strong>多线程同步ack</strong>: 适合push模型
-		  <p>这里的多线程是指多个线程(可以在不同的进程)消费同一队列/分区</p>
+          <strong>多线程消费同步ack</strong>: 一个队列被多个线程消费
+    		  <p>
+          1.并行消费，互不影响
+          <br>
+          2.不适合底层依赖队列存储模型的MQ
+          <br>
+          eg: RabbitMQ
+          </p>
         </li>
 
         <li class="slide" id="message-ack-multithread-async">
-          <strong>多线程异步ack</strong>: 得不偿失
+          <strong>多线程异步ack</strong>: 编码复杂度较高，性能不一定好
+          <p>
+          1.offset控制难度高，需要同步保证其准确性
+          <br>
+          2.失败处理
+          <br>
+          eg: RocketMQ
+          </p>
         </li>
       </ul>
     </section>
@@ -489,7 +501,7 @@
         <li class="slide" id="orderly-message-sorted">
           <strong>消息排序</strong>: 消息本身有序
 		  <p class="slide" id="orderly-message-sorted-design">
-		  <img src="./images/sorted-message.png" alt="Sorted Message">
+		  <img src="http://github.aifaq.me/sharing/MQ/design/images/sorted-message.png" alt="Sorted Message">
 		  </p>
         </li>
       </ul>
@@ -498,7 +510,7 @@
 	
 	<section class="slide" id="repeated-message">
       <h2>重复消息</h2>
-	  <img src="./images/At-most-Once.png" alt="At-most-Once">
+	  <img src="http://github.aifaq.me/sharing/MQ/design/images/At-most-Once.png" alt="At-most-Once">
 	  <p class="slide" id="repeated-message-design">给消息弄个ID，去重！！！</p>
       <ul>
         <li class="slide" id="repeated-message-p1">
@@ -513,7 +525,7 @@
 	
 	<section class="slide" id="transactional-message">
       <h2>事务消息</h2>
-	  <img src="./images/transactional-message.png" alt="TransactionalMessage">
+	  <img src="http://github.aifaq.me/sharing/MQ/design/images/transactional-message.png" alt="TransactionalMessage">
       <ul>
         <li class="slide" id="transactional-message-p1">
           <strong>消息需要二阶段提交</strong>
@@ -587,9 +599,6 @@
 	<section class="slide" id="thanks">
 		<h2>Thanks</h2>
 		<ol>Q/A</ol>
-		<ol>如果您觉得还不错，还请关注微信公众号：</ol>
-		<img src="../../resources/images/qrcode_for_gh_738ac67a9223_344.jpg" alt="微信公众号">
-		<ol>微信扫描上方二维码，或者搜索并关注微信公众号： 阅读的伟哥</ol>
     </section>
 
     <!-- End slides. -->
@@ -621,15 +630,15 @@
   </div>
 
 <!-- Required JS files. -->
-<script src="../../deck.js/jquery.min.js"></script>
-<script src="../../deck.js/core/deck.core.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/jquery.min.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/core/deck.core.js"></script>
 
 <!-- Extension JS files. Add or remove as needed. -->
-<script src="../../deck.js/extensions/menu/deck.menu.js"></script>
-<script src="../../deck.js/extensions/goto/deck.goto.js"></script>
-<script src="../../deck.js/extensions/status/deck.status.js"></script>
-<script src="../../deck.js/extensions/navigation/deck.navigation.js"></script>
-<script src="../../deck.js/extensions/scale/deck.scale.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/menu/deck.menu.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/goto/deck.goto.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/status/deck.status.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/scale/deck.scale.js"></script>
 
 <!-- Initialize the deck. You can put this in an external file if desired. -->
 <script>
