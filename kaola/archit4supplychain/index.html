@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  <title>供应链后台架构演进</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/themes/style/web-2.0.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="http://github.aifaq.me/sharing/deck.js/themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="http://github.aifaq.me/sharing/deck.js/core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="http://github.aifaq.me/sharing/deck.js/modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+
+    <section class="slide" id="index">
+      <h2>供应链后台架构演进</h2>
+      <ol>王伟</ol>
+      <ol>智慧供应链产品研发</ol>
+      <ol>hzwangwei6@corp.netease.com</ol>
+    </section>
+
+    <section class="slide" id="mb">
+      <h2>面向的客户？业务特点？</h2>
+    
+      <img src="./images/606444_koala.jpg" alt="mb">
+    </section>
+
+    <section class="slide" id="ouer-customer">
+      <h2>我们的客户？</h2>
+
+      <ul>
+        <li>
+          <strong>供应商</strong>
+        </li>
+
+        <li>
+          <strong>采购</strong>
+        </li>
+
+        <li>
+          <strong>运营</strong>
+        </li>
+
+        <li>
+          <strong>财务</strong>
+        </li>
+    
+        <li>
+          <strong>仓储</strong>
+        </li>
+    
+        <li>
+          <strong>小店</strong>
+        </li>
+    
+        <li>
+          <strong>QC</strong>
+        </li>
+    
+        <li>
+          <strong>客服</strong>
+        </li>
+      </ul>
+    </section>
+	
+    <section class="slide" id="system-feature">
+      <h2>业务特点？</h2>
+
+      <ul>
+        <li>
+          <strong>业务复杂度偏高</strong>
+        </li>
+
+        <li>
+          <strong>功能瞬息变化，每天都有来自业务方的需求</strong>
+        </li>
+
+        <li>
+          <strong>业务边界不明显，一个页面可能有来自N个业务的数据</strong>
+        </li>
+
+        <li>
+          <strong>QPS低，但RT较高</strong>
+        </li>
+
+        <li>
+          <strong>大都数情况下允许最终一致换取实时响应</strong>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide" id="system-feature-img">
+      <h2>一张图凸显“我们不一样”</h2>
+    
+      <img src="./images/frontend_vs_backend.png" alt="frontend_vs_backend">
+    </section>
+
+    <section class="slide" id="we-are-different">
+      <h2>“我们不一样”</h2>
+
+      <p>前后台还要遵循同样的技术标准或者规范吗？</p>
+
+      <img src="./images/question1.jpg" alt="question">
+
+      <ul>
+        <li class="slide" id="test-cover-rate">
+          <strong>单元测试覆盖率</strong>
+        </li>
+
+        <li class="slide" id="promotion-fixed">
+          <strong>大促封板</strong>
+        </li>
+
+        <li class="slide" id="promotion-fixed">
+          <strong>跨机房</strong>
+        </li>
+
+        <li class="slide" id="zookeeper">
+          <strong>zookeeper</strong>
+        </li>
+
+        <li class="slide" id="ddb">
+          <strong>ddb</strong>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide" id="rt">
+      <h2>言归正传</h2>
+    
+      <ul>
+        <li>
+          <strong>历史架构</strong>
+        </li>
+
+        <li>
+          <strong>SOA架构</strong>
+        </li>
+
+        <li>
+          <strong>服务化过程中的问题以及解决方案</strong>
+        </li>
+
+        <li>
+          <strong>下阶段计划</strong>
+        </li>
+
+        <li>
+          <strong>未来展望</strong>
+        </li>
+      </ul>
+    </section>
+	
+    <section class="slide" id="archit2017q2">
+      <h2>2017年上半年架构</h2>
+	  
+      <img src="./images/1_0.png" alt="archit2017q2">
+    </section>
+	
+    <section class="slide" id="archit2017q3">
+      <h2>2017年下半年SOA架构</h2>
+
+      <img src="./images/2_0.png" alt="archit2017q3">
+    </section>
+	
+    <section class="slide" id="questions4soa">
+      <h2>服务化过程中的问题</h2>
+
+      <ul>
+        <li>
+          <strong>代码复用</strong>
+        </li>
+
+        <li>
+          <strong>jar包升级带来的各种兼容问题</strong>
+        </li>
+		
+        <li>
+          <strong>分布式事务</strong>
+        </li>
+    
+        <li>
+          <strong>问题排查</strong>
+        </li>
+
+        <li>
+          <strong>... ...</strong>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide" id="public-module">
+      <h2>提供丰富的组件解决代码复用问题</h2>
+
+      <ul>
+        <li>
+          <strong>登录</strong>
+        </li>
+
+        <li>
+          <strong>国际化</strong>
+        </li>
+
+        <li>
+          <strong>权限</strong>
+        </li>
+
+        <li>
+          <strong>流水号</strong>
+        </li>
+
+        <li>
+          <strong>异常处理</strong>
+        </li>
+
+        <li>
+          <strong>下拉列表</strong>
+        </li>
+
+        <li>
+          <strong>分片</strong>
+        </li>
+
+        <li>
+          <strong>分布式事务</strong>
+        </li>
+    
+      </ul>
+
+      <h4 class="slide" id="how-use-easy">功能太多、配置太麻烦？</h4>
+    </section>
+	
+    <section class="slide" id="scaffold-springboot">
+      <h2>springboot脚手架</h2>
+      <p>屏蔽jar包升级带来的各种兼容问题</p>
+
+      <h3 class="slide" id="example-solo-rdb">Example：solo-rdb客户端升级</h3>
+      <ul>
+        <li class="slide" id="move-solo-rdb">
+          <strong>架构组宣布：nkv、ncr、redis迁移solo</strong>
+        </li>
+
+        <li class="slide" id="move-solo-rdb-biz">
+          <strong>业务方：</strong>
+          <p class="slide" id="move-solo-rdb-biz-mb">
+          <img src="./images/mb.jpg" alt="mb">
+          </p>
+          <p class="slide" id="move-solo-rdb-biz-mb-adapter">
+            Jedis、RedisTemplate、spring cache、spring session等更改以及适配
+          </p>
+        </li>
+
+        <li class="slide" id="move-solo-rdb-sc-core-common">
+          <strong>脚手架适配，使用方升级pom版本即可，业务无感知</strong>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide" id="one-parent-pom">
+      <h2>统一父pom</h2>
+
+      <ul>
+        <li>
+          <strong>jar包版本统一管理</strong>
+        </li>
+
+        <li>
+          <strong>子工程对jar包冲突说no</strong>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide" id="how-ec">
+      <h2>如何保证数据一致性?</h2>
+      <h4>现状：</h4>
+      <h4 class="slide" id="how-ec-retry"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 大部分不做处理，碰到问题修数据</h4>
+
+      <p class="slide" id="execuse-me">
+      <img src="./images/execuse-me.jpg" alt="execuse-me">
+      </p>
+
+      <h4 class="slide" id="why-not-tcc">为什么不用TCC呢？</h4>
+
+      <p class="slide" id="we-are-different">
+      <img src="./images/we-are-different.jpg" alt="we-are-different">
+      </p>
+
+      <h4 class="slide" id="how-ec-fix">有别的解决方案吗？</h4>
+    </section>
+
+	  <section class="slide" id="paladin-ec">
+      <h2>帕拉丁-数据一致性方案</h2>
+      <p>最终一致</p>
+
+      <pre><code>
+/**
+ * 方法上定义该注解，表示该方法将使用paladin事务来达到数据的最终一致。
+ * 这里没有定义回滚逻辑，如果最终失败只会告警。
+ */
+@EnableTransactionSnapshot(name = "saveOrder")
+void save(Order order) {
+    // 减库存
+    skuService.decreaseStock(order.getSkuId(), order.getAmount(), order.getOrderNo());
+
+    // 减资产
+    assetService.decreaseAsset(order.getUserId(), order.getTotalPrice(), order.getOrderNo());
+
+    // 保存至DB
+    save2db(order);
+}
+      </code></pre>
+    </section>
+
+    <section class="slide" id="paladin-rollback">
+      <h2>帕拉丁-数据一致性方案</h2>
+      <p>回滚</p>
+
+      <pre><code>
+/**
+ * 执行正常则事务结束，执行异常走rollback逻辑。
+ */
+@EnableRollback(rollback = "rollbackForSaveOrder")
+@EnableTransactionSnapshot(name = "saveOrder", maxInvokes = 1)
+void save(Order order) {
+    // 减库存
+    skuService.decreaseStock(order.getSkuId(), order.getAmount(), order.getOrderNo());
+
+    // 减资产
+    assetService.decreaseAsset(order.getUserId(), order.getTotalPrice(), order.getOrderNo());
+
+    // 保存至DB
+    save2db(order);
+}
+
+/**
+ * 固定入参 {@link TransactionContext}
+ */
+@EnableTransactionSnapshot(name = "rollbackForSaveOrder")
+void rollbackForSave(TransactionContext context) {
+    final Order order = (Order) context.getArgs()[0];
+
+    // 回滚还原库存
+    skuService.increaseStock(order.getSkuId(), order.getAmount(), order.getOrderNo());
+
+    // 回滚还原资产
+    assetService.increaseAsset(order.getUserId(), order.getTotalPrice(), order.getOrderNo());
+}
+      </code></pre>
+    </section>
+
+    <section class="slide" id="paladin-tcc">
+      <h2>帕拉丁-数据一致性方案</h2>
+      <p>TCC事务</p>
+
+      <pre><code>
+/**
+ * 执行正常走confirm逻辑，执行异常走cancel逻辑。
+ */
+@EnableTCC(confirm = "confirmSaveOrder", cancel = "cancelSaveOrder")
+@EnableTransactionSnapshot(name = "trySaveOrder")
+void tccSave(Order order) {
+    // 锁定库存
+    skuService.lockStock(order.getSkuId(), order.getAmount(), order.getOrderNo());
+
+    // 锁定资产
+    assetService.lockAsset(order.getUserId(), order.getTotalPrice(), order.getOrderNo());
+}
+
+/**
+ * 固定入参 {@link TransactionContext}
+ */
+@EnableTransactionSnapshot(name = "confirmSaveOrder")
+void confirmSaveOrder(Order order) {
+    final Order order = (Order) context.getArgs()[0];
+
+    // 减库存
+    skuService.decreaseStock(order.getSkuId(), order.getAmount(), order.getOrderNo());
+
+    // 减资产
+    assetService.decreaseAsset(order.getUserId(), order.getTotalPrice(), order.getOrderNo());
+
+    // 保存至DB
+    save2db(order);
+}
+
+/**
+ * 固定入参 {@link TransactionContext}
+ */
+@EnableTransactionSnapshot(name = "cancelSaveOrder")
+void cancelSaveOrder(TransactionContext context) {
+    final Order order = (Order) context.getArgs()[0];
+
+    // 解锁库存
+    skuService.unlockStock(order.getSkuId(), order.getAmount(), order.getOrderNo());
+
+    // 解锁资产
+    assetService.unlockAsset(order.getUserId(), order.getTotalPrice(), order.getOrderNo());
+}
+      </code></pre>
+    </section>
+
+    <section class="slide" id="complex-query">
+      <h2>复杂的业务查询</h2>
+
+      <img src="./images/complex-query.png" alt="gaea">
+
+      <h4 class="slide" id="how-page">涉及四个系统，分页如何做？</h4>
+    </section>
+	
+	  <section class="slide" id="gaea">
+      <h2>盖亚-数据冗余方案</h2>
+
+      <img src="./images/gaea.png" alt="gaea">
+    </section>
+
+    <section class="slide" id="archit-today">
+      <h2>当前架构</h2>
+
+      <img src="./images/2_1.png" alt="traces">
+    </section>
+
+    <section class="slide" id="future">
+      <h2>下阶段计划</h2>
+
+      <ul>
+        <li>
+          <strong>公共功能处理</strong>: 菜单、权限、下拉框
+        </li>
+    
+        <li>
+          <strong>建立有效的问题排查手段应对日益复杂的业务</strong>
+        </li>
+    
+      </ul>
+    </section>
+	
+    <section class="slide" id="gateway">
+      <h2>网关</h2>
+
+      <img src="./images/gateway.png" alt="gateway">
+    </section>
+  
+    <section class="slide" id="dselect">
+      <h2>分布式下拉框列表</h2>
+
+      <img src="./images/dselect.png" alt="dselect">
+    </section>
+
+    <section class="slide" id="collect-data">
+      <h2>数据埋点</h2>
+
+      <ul>
+        <li>
+          <strong>http请求响应</strong>
+        </li>
+
+        <li>
+          <strong>业务埋点</strong>
+        </li>
+
+        <li>
+          <strong>核心方法调用栈</strong>
+        </li>
+      </ul>
+    </section>
+  
+    <section class="slide" id="biz-alert">
+      <h2>监控</h2>
+
+      <img src="./images/alert.png" alt="alert">
+    </section>
+  
+    <section class="slide" id="archit-future">
+      <h2>下阶段整体架构</h2>
+
+      <img src="./images/3_0.png" alt="traces">
+    </section>
+
+    <section class="slide" id="archit-future">
+      <h2>未来展望</h2>
+
+      <ul>
+        <li>
+          <strong>2B业务</strong>
+        </li>
+      </ul>
+    </section>
+	
+	<section class="slide" id="thanks">
+		<h2>Thanks</h2>
+		<ol>Q/A</ol>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="http://github.aifaq.me/sharing/deck.js/jquery.min.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/menu/deck.menu.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/goto/deck.goto.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/status/deck.status.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="http://github.aifaq.me/sharing/deck.js/extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+</body>
+</html>
