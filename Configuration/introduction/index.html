@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  <title>聊聊配置中心</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="../../deck.js/extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/style/web-2.0.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="../../deck.js/themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="../../deck.js/core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="../../deck.js/modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+
+    <section class="slide" id="index">
+      <h2>聊聊配置中心</h2>
+      <ol>Name : 王伟</ol>
+      <ol>Department : 智慧供应链</ol>
+      <ol>Email : hzwangwei6@corp.netease.com</ol>
+    </section>
+
+  <section class="slide" id="feature">
+      <h2>配置中心必备的气质</h2>
+      <ul class="slide" id="feature-list">
+        <li>
+          <strong>高可用</strong>
+        </li>
+    
+        <li>
+          <strong>高性能</strong>
+        </li>
+
+        <li>
+          <strong>高并发</strong>
+        </li>
+
+        <li>
+          <strong>环境隔离</strong>
+        </li>
+    
+        <li>
+          <strong>动态生效</strong>
+        </li>
+      </ul>
+    </section>
+	
+    <section class="slide" id="dis-theory">
+      <h2>分布式系统的经典理论</h2>
+	  
+      <ul>
+        <li>
+          <strong>CAP</strong>
+        </li>
+
+        <li>
+          <strong>BASE</strong>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide" id="cc-list">
+      <h2>分析几款配置中心</h2>
+    
+      <ul>
+        <li>
+          <strong>diamond</strong>
+        </li>
+
+        <li>
+          <strong>disconf</strong>
+        </li>
+
+        <li>
+          <strong>spring cloud config</strong>
+        </li>
+      </ul>
+    </section>
+
+	  <section class="slide" id="diamond">
+      <h2>diamond高可用</h2>
+
+      <img src="./images/diamond-high-availability.png" alt="diamond-high-availability">
+    </section>
+
+	<section class="slide" id="disconf">
+      <h2>"简单工厂"</h2>
+
+
+    </section>
+
+	<section class="slide" id="spring-cloud-config">
+      <h2>"简单工厂"的特点</h2>
+      <ul>
+        <li class="slide" id="SimpleFactory-feature-staticMethod">
+          <strong>静态方法</strong>：
+        </li>
+		
+        <li class="slide" id="SimpleFactory-feature-explicitType">
+          <strong>根据入参明确"产品"类型</strong>：
+        </li>
+		
+        <li class="slide" id="SimpleFactory-feature-addProduct">
+          <strong>增加新的"产品"需要修改工厂类的判断逻辑代码</strong>：
+        </li>
+		
+        <li class="slide" id="SimpleFactory-feature-MultiProduct">
+          <strong>"产品"数量影响工厂方法的复杂度</strong>：
+        </li>
+      </ul>
+
+	  <h4 class="slide" id="SimpleFactory-whatTheUseScene" style="color:blue;">哪些场景适合使用"简单工厂"模式？</h4>
+    </section>
+
+	
+	<section class="slide" id="thanks">
+		<h2>Thanks</h2>
+		<ol>Q/A</ol>
+  </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="../../deck.js/jquery.min.js"></script>
+<script src="../../deck.js/core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="../../deck.js/extensions/menu/deck.menu.js"></script>
+<script src="../../deck.js/extensions/goto/deck.goto.js"></script>
+<script src="../../deck.js/extensions/status/deck.status.js"></script>
+<script src="../../deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="../../deck.js/extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+</body>
+</html>
