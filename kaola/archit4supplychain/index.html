@@ -190,7 +190,11 @@
 
       <ul>
         <li>
-          <strong>代码复用</strong>
+          <strong>代码质量</strong>
+        </li>
+
+        <li>
+          <strong>开发效率</strong>
         </li>
 
         <li>
@@ -215,32 +219,28 @@
       </ul>
     </section>
 
-    <section class="slide" id="public-module">
-      <h2>提供丰富的组件解决代码复用问题</h2>
+    <section class="slide" id="sc-common-core">
+      <h2>sc-common-core</h2>
 
       <ul>
         <li>
-          <strong>登录</strong>
+          <strong>统一父pom</strong>
         </li>
 
         <li>
-          <strong>国际化</strong>
+          <strong>springboot脚手架</strong>
         </li>
 
         <li>
-          <strong>权限</strong>
+          <strong>模板工程</strong>
         </li>
 
         <li>
-          <strong>流水号</strong>
+          <strong>前后端分离，通用逻辑抽象：</strong>登录及权限、下拉列表、文件上传
         </li>
 
         <li>
-          <strong>异常处理</strong>
-        </li>
-
-        <li>
-          <strong>下拉列表</strong>
+          <strong>参数校验、异常处理、国际化</strong>
         </li>
 
         <li>
@@ -256,8 +256,6 @@
         </li>
     
       </ul>
-
-      <h4 class="slide" id="how-use-easy">功能太多、配置太麻烦？</h4>
     </section>
 	
     <section class="slide" id="scaffold-springboot">
@@ -282,20 +280,6 @@
 
         <li class="slide" id="move-solo-rdb-sc-core-common">
           <strong>脚手架适配，使用方升级pom版本即可，业务无感知</strong>
-        </li>
-      </ul>
-    </section>
-
-    <section class="slide" id="one-parent-pom">
-      <h2>统一父pom</h2>
-
-      <ul>
-        <li>
-          <strong>jar包版本统一管理</strong>
-        </li>
-
-        <li>
-          <strong>子工程对jar包冲突说no</strong>
         </li>
       </ul>
     </section>
@@ -456,13 +440,16 @@ void cancelSaveOrder(TransactionContext context) {
 
       <ul>
         <li>
-          <strong>公共功能处理</strong>: 菜单、权限、下拉框
+          <strong>供应链运维平台搭建，面向产技以及技术支持，减少开发运维人力</strong>
         </li>
     
         <li>
-          <strong>建立有效的问题排查手段应对日益复杂的业务</strong>
+          <strong>数据埋点，建立有效的问题排查机制</strong>
         </li>
     
+        <li>
+          <strong>业务监控，业务异常有效监控</strong>
+        </li>
       </ul>
     </section>
 	
@@ -494,6 +481,8 @@ void cancelSaveOrder(TransactionContext context) {
           <strong>核心方法调用栈</strong>
         </li>
       </ul>
+
+      <img src="./images/trace.png" alt="trace">
     </section>
   
     <section class="slide" id="biz-alert">
@@ -505,7 +494,7 @@ void cancelSaveOrder(TransactionContext context) {
     <section class="slide" id="archit-future">
       <h2>下阶段整体架构</h2>
 
-      <img src="./images/3_0.png" alt="traces">
+      <img src="./images/3_0.png" alt="archit3.0">
     </section>
 	
 	<section class="slide" id="thanks">
