@@ -279,7 +279,7 @@
         </li>
 
         <li class="slide" id="move-solo-rdb-sc-core-common">
-          <strong>脚手架适配，使用方升级pom版本即可，业务无感知</strong>
+          <strong>脚手架适配，使用方升级pom版本即可，代码无需改动</strong>
         </li>
       </ul>
     </section>
@@ -420,7 +420,15 @@ void cancelSaveOrder(TransactionContext context) {
 
       <h4 class="slide" id="how-page">涉及四个系统，分页如何做？</h4>
 
-      <h4 class="slide" id="how-page-join">宽表JOIN ！！！</h4>
+      <ul class="slide" id="how-page2">
+        <li>
+          <strong>宽表：</strong>es
+        </li>
+    
+        <li class="slide" id="how-page-rds-join">
+          <strong>RDS join</strong>
+        </li>
+      </ul>
     </section>
 	
 	  <section class="slide" id="gaea">
@@ -440,6 +448,14 @@ void cancelSaveOrder(TransactionContext context) {
 
       <ul>
         <li>
+          <strong>脚手架升级至 springboot2.x + spring5.x</strong>
+        </li>
+
+        <li>
+          <strong>应用的边界问题</strong>
+        </li>
+
+        <li>
           <strong>供应链运维平台搭建，面向产技以及技术支持，减少开发运维人力</strong>
         </li>
     
@@ -448,21 +464,15 @@ void cancelSaveOrder(TransactionContext context) {
         </li>
     
         <li>
-          <strong>业务监控，业务异常有效监控</strong>
+          <strong>业务监控，业务异常实时反馈</strong>
         </li>
       </ul>
     </section>
-	
-    <section class="slide" id="gateway">
-      <h2>网关</h2>
 
-      <img src="./images/gateway.png" alt="gateway">
-    </section>
-  
-    <section class="slide" id="dselect">
-      <h2>分布式下拉框列表</h2>
+    <section class="slide" id="app-border">
+      <h2>应用边界问题</h2>
 
-      <img src="./images/dselect.png" alt="dselect">
+      <img src="./images/app-border.png" alt="app-border">
     </section>
 
     <section class="slide" id="collect-data">
@@ -489,6 +499,18 @@ void cancelSaveOrder(TransactionContext context) {
       <h2>监控</h2>
 
       <img src="./images/alert.png" alt="alert">
+    </section>
+
+    <section class="slide" id="gateway">
+      <h2>网关</h2>
+
+      <img src="./images/gateway.png" alt="gateway">
+    </section>
+  
+    <section class="slide" id="dselect">
+      <h2>分布式下拉框列表</h2>
+
+      <img src="./images/dselect.png" alt="dselect">
     </section>
   
     <section class="slide" id="archit-future">
