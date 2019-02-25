@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>JSON-RPC</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>JSON-RPC</h1>
+					<h3>王伟</h3>
+					<p>供应链产品事业部</p>
+				</section>
+
+        <section style="text-align: left;">
+          <h2>业务边界</h2>
+
+          <img src="./images/biz-side.png" alt="biz-side">
+        </section>
+
+				<section style="text-align: left;">
+					<h2>JSON-RPC是什么？</h2>
+					<p>
+						JSON-RPC is a stateless, light-weight remote procedure call (RPC) protocol.
+					</p>
+          <p>
+            JSON-RPC是一个无状态且轻量级的远程过程调用(RPC)协议。
+          </p>
+				</section>
+
+        <section style="text-align: left; " data-markdown>
+          <script type="text/template">
+          ### JSON-RPC是一种协议规范
+          #### <mark>JSON-RPC vs RESTful</mark>
+          * GET：读取
+          ```
+          GET twitter/_search?q=user:kimchy
+          ```
+          * POST：新建
+          ```
+          POST /twitter/_refresh
+          ```
+          * PUT：更新
+          ```
+          PUT /twitter/_doc/1?refresh
+          ```
+          * DELETE：删除
+          ```
+          DELETE /twitter/_doc/1
+          ```
+          </script>
+        </section>
+
+        <section style="text-align: left;" data-markdown>
+          <script type="text/template">
+          ### JSON-RPC在币圈：创建以太坊订单
+```
+// Request
+curl -X POST --data '{"jsonrpc":"2.0","method":"eth_sendTransaction","params":[{
+  "from": "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
+  "to": "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+  "gas": "0x76c0", // 30400
+  "gasPrice": "0x9184e72a000", // 10000000000000
+  "value": "0x9184e72a", // 2441406250
+  "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
+}],"id":1}'
+
+// Result
+{
+  "id":1,
+  "jsonrpc": "2.0",
+  "result": "0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331"
+}
+```
+          </script>
+        </section>
+
+        <section style="text-align: left;" data-markdown>
+          <script type="text/template">
+          ### JSON-RPC请求对象
+          * jsonrpc
+            * 协议版本，当前必须为“2.0”
+          * method
+            * 调用方法名称
+          * params
+            * 调用方法所需要的结构化参数值，该成员参数可以被省略。
+          * id
+            * 已建立客户端的唯一标识id。如果不包含该成员则被认定为是一个通知。
+          </script>
+        </section>
+
+        <section style="text-align: left;" data-markdown>
+          <script type="text/template">
+          ### JSON-RPC响应对象
+          * jsonrpc
+            * 协议版本，当前必须为“2.0”
+          * result
+            * 该成员在成功时必须包含。当调用方法引起错误时必须不包含该成员。
+          * error
+            * 该成员在失败是必须包含。当没有引起错误的时必须不包含该成员。
+          * id
+            * 该成员值必须于请求对象中的id成员值一致。
+          </script>
+        </section>
+
+        <section style="text-align: left;" data-markdown>
+          <script type="text/template">
+          ### JSON-RPC错误对象
+          * code
+            * 使用数值表示该异常的错误类型。 必须为整数。
+          * message
+            * 对该错误的简单描述字符串。 该描述应尽量限定在简短的一句话。
+          * data
+            * 包含关于错误附加信息的基本类型或结构化类型。该成员可忽略。 该成员值由服务端定义（例如详细的错误信息，嵌套的错误等）。
+          </script>
+        </section>
+
+        <section>
+          <p>
+            详细内容请参考：</p>
+          <p>
+            <a href="https://www.jsonrpc.org/specification" target="_blank">https://www.jsonrpc.org/specification</a>
+          </p>
+        </section>
+
+        <section>
+          <h3>有成熟的java版json-rpc库吗？</h3>
+        </section>
+
+        <section style="text-align: left;">
+          <h2><a href="https://github.com/briandilley/jsonrpc4j">jsonrpc4j</a></h2>
+
+
+          <p>实现原理？</p>
+
+          <pre><code class="hljs" data-trim contenteditable>
+curl -i -H 'content-type: application/json' -X POST -d '{
+      "jsonrpc": "2.0", 
+      "method": "isPhoneNoLimit", 
+      "params": [ "MOBILE", "130000", "A001"],
+      "id": 1
+}' 'http://127.0.0.1:18080/com.qianmi.api.PhoneNoCheckProvider'
+          </code></pre>
+
+          <br/>
+          <br/>
+
+          <p class="fragment" style="color:#CC9999">dubbo如何支持JSON-RPC？</p>
+        </section>
+
+
+				<section style="text-align: left;">
+					<h2>dubbo如何支持JSON-RPC？</h2>
+
+          <ul>
+            <li>新建协议类<p>实现com.alibaba.dubbo.rpc.Protocol接口</p></li>
+            <li>编写META-INF/dubbo/internal/com.alibaba.dubbo.rpc.Protocol
+
+          <pre><code class="hljs" data-trim contenteditable>
+jsonrpc=com.qianmi.dubbo.rpc.protocol.jsonrpc.JsonRpcProtocol
+          </code></pre>
+            </li>
+          </ul>
+				</section>
+
+        <section>
+
+          <section>
+            <h2>三步配置，让dubbo支持json-rpc</h2>
+          </section>
+
+          <section style="text-align: left; " data-markdown>
+            <script type="text/template">
+            ### pom依赖
+            ```xml
+<dependency>
+  <groupId>com.netease.kaola</groupId>
+  <artifactId>dubbo-rpc-jsonrpc</artifactId>
+  <version>1.0.3</version>
+</dependency>
+            ```
+            </script>
+          </section>
+
+          <section style="text-align: left; " data-markdown>
+            <script type="text/template">
+            ### dubbo.xml添加json-rpc协议
+            ```
+  <dubbo:protocol name="jsonrpc" server="servlet"/>
+            ```
+            </script>
+          </section>
+
+          <section style="text-align: left; " data-markdown>
+            <script type="text/template">
+            ### web.xml添加DispatcherServlet
+            ```
+<servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>com.alibaba.dubbo.remoting.http.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+    <url-pattern>/*</url-pattern>
+</servlet-mapping>
+            ```
+            </script>
+          </section>
+
+          <section>
+            <p>
+              详细内容请参考：</p>
+            <p>
+              <a href="http://arch-kl.netease.com/#/dubbok/references/protocol/jsonrpc" target="_blank">http://arch-kl.netease.com/#/dubbok/references/protocol/jsonrpc</a>
+            </p>
+          </section>
+
+        </section>
+				
+				<section style="text-align: left; ">
+					<h2>dubbo-json-rpc缺陷</h2>
+					<ul>
+						<li>根路径抓取类名局限性大                
+          <p><font size=6 color="#0099CC">
+/sc-goods/api/com.netease.sc.goods.api.ScGoodsSkuApi</font>
+          </p>
+            </li>
+						<li>servlet-mapping配置url-pattern挺麻烦的</li>
+					</ul>
+          <br/>
+          <br/>
+          <p class="fragment" style="color:#CC9999">有解决方案吗？</p>
+				</section>
+
+          <section style="text-align: left; " data-markdown>
+            <script type="text/template">
+            ### sc-parent
+            #### 把spring bean以json-rpc的方式输出
+            * 依赖pom
+            ```
+<dependency>
+  <groupId>com.netease.kaola</groupId>
+  <artifactId>sc-spring-boot-starter</artifactId>
+</dependency>
+            ```
+            * 使用注解
+            ```
+@EnableJsonRpc
+            ```
+            </script>
+          </section>
+
+				<section style="text-align: left;">
+					<h1>Q/A</h1>
+          <h3>THANKS</h3>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="../../reveal.js/lib/js/head.min.js"></script>
+		<script src="../../reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+        width: "90%",
+        height: "100%",
+        margin: 0,
+        minScale: 1,
+        maxScale: 1,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: '../../reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../../reveal.js/plugin/search/search.js', async: true },
+					{ src: '../../reveal.js/plugin/zoom-js/zoom.js', async: true },
+					{ src: '../../reveal.js/plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
